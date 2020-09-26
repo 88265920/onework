@@ -1,0 +1,69 @@
+POST http://localhost:8080/template/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="t_ud_kafka_conf.sql"
+
+< ../sql-files/template_sqls/t_ud_kafka_conf.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/template/delete?templateName=ud_kafka_conf
+
+###
+
+
+
+
+POST http://localhost:8080/template/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="t_dispatch_slave_base_data_mysql_conf.sql"
+
+< ../sql-files/template_sqls/t_dispatch_slave_base_data_mysql_conf.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/template/delete?templateName=dispatch_slave_base_data_mysql_conf
+
+###
+
+
+
+
+
+POST http://localhost:8080/template/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="t_bdnode5_szb_visualization_mysql_conf.sql"
+
+< ../sql-files/template_sqls/t_bdnode5_szb_visualization_mysql_conf.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/template/delete?templateName=bdnode5_szb_visualization_mysql_conf
+
+###
+
+
+
+
+POST http://localhost:8080/template/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="t_dispatch_card_kafka_conf.sql"
+
+< ../sql-files/template_sqls/t_dispatch_card_kafka_conf.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/template/delete?templateName=dispatch_card_kafka_conf
+
+###

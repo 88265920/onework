@@ -1,0 +1,96 @@
+GET http://localhost:8080/streamJob/jobs
+
+###
+
+POST http://localhost:8080/streamJob/create
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="szb_visualization.sql"
+
+< ../sql-files/stream_job_sqls/szb_visualization.sql
+--WebAppBoundary--
+
+###
+
+POST http://localhost:8080/streamJob/upgrade
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="szb_visualization.sql"
+
+< ../sql-files/stream_job_sqls/szb_visualization.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/streamJob/resume?jobName=szb_visualization
+
+###
+
+GET http://localhost:8080/streamJob/resumeWithoutState?jobName=szb_visualization
+
+###
+
+GET http://localhost:8080/streamJob/suspend?jobName=szb_visualization
+
+###
+
+GET http://localhost:8080/streamJob/suspendWithSavepoint?jobName=szb_visualization
+
+###
+
+GET http://localhost:8080/streamJob/delete?jobName=szb_visualization
+
+###
+
+
+
+POST http://localhost:8080/streamJob/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="functions.sql"
+
+< ../sql-files/functions.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/streamJob/delete?jobName=functions
+
+###
+
+
+
+POST http://localhost:8080/streamJob/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="szb_visualization_create.sql"
+
+< ../sql-files/stream_job_sqls/szb_visualization_create.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/streamJob/delete?jobName=szb_visualization_create
+
+###
+
+
+
+POST http://localhost:8080/streamJob/submit
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="szb_visualization_view.sql"
+
+< ../sql-files/stream_job_sqls/szb_visualization_view.sql
+--WebAppBoundary--
+
+###
+
+GET http://localhost:8080/streamJob/delete?jobName=szb_visualization_view
+
+###
