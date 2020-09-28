@@ -1,6 +1,6 @@
 package com.onework.core.entity;
 
-import com.onework.core.common.Constants;
+import com.onework.core.enums.ResumeMethod;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,5 +19,5 @@ public class StreamJob extends BaseJob {
     private String savepoint;
 
     @Enumerated(value = EnumType.STRING)
-    private Constants.ResumeMethod resumeMethod;
+    private ResumeMethod resumeMethod;
 }

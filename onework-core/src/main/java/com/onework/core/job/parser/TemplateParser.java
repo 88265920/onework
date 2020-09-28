@@ -1,9 +1,10 @@
 package com.onework.core.job.parser;
 
-import com.onework.core.common.Constants;
 import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.Template;
 import com.onework.core.entity.TemplateEntry;
+import com.onework.core.enums.StatementKind;
+import com.onework.core.enums.TemplateKind;
 import com.onework.core.job.parser.statement.SqlStatementParser;
 import com.onework.core.job.parser.statement.StatementParser;
 import com.onework.core.job.parser.statement.TemplateEntryParser;
@@ -17,9 +18,9 @@ import java.util.stream.Collectors;
 public class TemplateParser extends BaseJobParser<Template> {
 
     @Override
-    protected void bindParser(Map<Constants.StatementKind, StatementParser> statementParsers) {
-        statementParsers.put(Constants.StatementKind.TEMPLATE_ENTRY, new TemplateEntryParser());
-        statementParsers.put(Constants.StatementKind.SQL_STATEMENT, new SqlStatementParser());
+    protected void bindParser(Map<StatementKind, StatementParser> statementParsers) {
+        statementParsers.put(StatementKind.TEMPLATE_ENTRY, new TemplateEntryParser());
+        statementParsers.put(StatementKind.SQL_STATEMENT, new SqlStatementParser());
     }
 
     @SuppressWarnings("unchecked")
@@ -27,13 +28,13 @@ public class TemplateParser extends BaseJobParser<Template> {
     protected Template onCreateJob(List<Map<String, Object>> statementsData) {
         Template template = new Template();
         for (Map<String, Object> statementData : statementsData) {
-            Constants.StatementKind statementKind = getStatementKind(statementData);
+            StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
                 case TEMPLATE_ENTRY:
                     Map<String, String> templateParams = (Map<String, String>) statementData.get("templateParams");
                     String templateName = templateParams.get("templateName");
                     TemplateEntry templateEntry = new TemplateEntry(templateName,
-                            (Constants.TemplateKind) statementData.get("templateKind"), templateParams);
+                            (TemplateKind) statementData.get("templateKind"), templateParams);
                     template.setTemplateEntry(templateEntry);
                     template.setTemplateName(templateName);
                     break;

@@ -1,7 +1,7 @@
 package com.onework.core.entity;
 
-import com.onework.core.common.Constants;
 import com.onework.core.converter.List2StringConverter;
+import com.onework.core.enums.JobStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ public abstract class BaseJob extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NonNull
-    private Constants.JobStatus jobStatus;
+    private JobStatus jobStatus;
 
     @NonNull
     @JoinColumn(name = "jobName")

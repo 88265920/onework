@@ -2,8 +2,8 @@ package com.onework.core.job.quartz;
 
 import com.onework.core.ApplicationContextGetter;
 import com.onework.core.client.HdfsCheckpointManager;
-import com.onework.core.common.Constants;
 import com.onework.core.entity.StreamJob;
+import com.onework.core.enums.ResumeMethod;
 import com.onework.core.service.StreamJobService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class StreamJobCheckpointCleaner extends QuartzJobBean {
         List<StreamJob> streamJobs = streamJobService.findNotCreatedStatusJobs();
         for (StreamJob job : streamJobs) {
             String savepoint = job.getSavepoint();
-            if (!job.getResumeMethod().equals(Constants.ResumeMethod.SAVEPOINT) && StringUtils.isNotEmpty(savepoint)) {
+            if (!job.getResumeMethod().equals(ResumeMethod.SAVEPOINT) && StringUtils.isNotEmpty(savepoint)) {
                 fs.delete(new Path(savepoint), true);
                 log.info("Clear expired savepoint directory: {}", savepoint);
             }

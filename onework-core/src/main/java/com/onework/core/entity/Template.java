@@ -1,6 +1,6 @@
 package com.onework.core.entity;
 
-import com.onework.core.common.Constants;
+import com.onework.core.enums.TemplateStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -22,7 +22,7 @@ public class Template extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NonNull
-    private Constants.TemplateStatus templateStatus;
+    private TemplateStatus templateStatus;
 
     @Lob
     @Column(columnDefinition = "text")

@@ -1,8 +1,8 @@
 package com.onework.core.controller;
 
 import com.google.common.io.ByteStreams;
-import com.onework.core.common.Constants;
 import com.onework.core.entity.Template;
+import com.onework.core.enums.TemplateStatus;
 import com.onework.core.job.parser.TemplateParser;
 import com.onework.core.service.TemplateService;
 import lombok.NonNull;
@@ -45,7 +45,7 @@ public class TemplateController {
         if (templateService.existsByTemplateName(template.getTemplateName())) {
             return Response.error("模板已存在");
         } else {
-            template.setTemplateStatus(Constants.TemplateStatus.CREATED);
+            template.setTemplateStatus(TemplateStatus.CREATED);
             templateService.save(template);
         }
 

@@ -1,6 +1,6 @@
 package com.onework.core.job.parser.statement;
 
-import com.onework.core.common.Constants;
+import com.onework.core.enums.TemplateKind;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class TemplateEntryParser implements StatementParser {
         Map<String, Object> templateEntryData = new HashMap<>();
         int startIdx = 1;
         int endIdx = content.indexOf('{');
-        Constants.TemplateKind templateKind = Constants.TemplateKind.valueOf(content.substring(startIdx, endIdx).toUpperCase());
+        TemplateKind templateKind = TemplateKind.valueOf(content.substring(startIdx, endIdx).toUpperCase());
         templateEntryData.put("templateKind", templateKind);
 
         startIdx = endIdx + 1;

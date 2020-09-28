@@ -1,7 +1,7 @@
 package com.onework.core.entity;
 
-import com.onework.core.common.Constants;
 import com.onework.core.converter.Map2JsonConverter;
+import com.onework.core.enums.JobKind;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ public class JobEntry extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NonNull
-    private Constants.JobKind jobKind;
+    private JobKind jobKind;
 
     @Lob
     @Column(columnDefinition = "text")
@@ -30,7 +30,7 @@ public class JobEntry extends BaseEntity {
     public JobEntry() {
     }
 
-    public JobEntry(String jobName, @NonNull Constants.JobKind jobKind, @NonNull Map<String, String> jobParams) {
+    public JobEntry(String jobName, @NonNull JobKind jobKind, @NonNull Map<String, String> jobParams) {
         this.jobName = jobName;
         this.jobKind = jobKind;
         this.jobParams = jobParams;

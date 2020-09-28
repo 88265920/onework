@@ -2,10 +2,10 @@ package com.onework.core.job.executor;
 
 import com.onework.core.client.HdfsCheckpointManager;
 import com.onework.core.client.YarnClusterClient;
-import com.onework.core.common.Constants;
 import com.onework.core.conf.OneWorkConf;
 import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.StreamJob;
+import com.onework.core.enums.JobStatus;
 import com.onework.core.service.StreamJobService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -159,10 +159,10 @@ public class StreamJobExecutor {
         if (jobClient.isPresent()) jobId = jobClient.get().getJobID().toString();
         if (!streamJobService.existsByJobName(job.getJobName())) {
             job.setJobId(jobId);
-            job.setJobStatus(Constants.JobStatus.RUNNING);
+            job.setJobStatus(JobStatus.RUNNING);
             streamJobService.save(job);
         } else {
-            streamJobService.setStatusAndIdByName(Constants.JobStatus.RUNNING, jobId, job.getJobName());
+            streamJobService.setStatusAndIdByName(JobStatus.RUNNING, jobId, job.getJobName());
         }
     }
 

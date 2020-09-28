@@ -1,6 +1,6 @@
 package com.onework.core.job.parser.statement;
 
-import com.onework.core.common.Constants;
+import com.onework.core.enums.JobKind;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class JobEntryParser implements StatementParser {
         Map<String, Object> jobEntryData = new HashMap<>();
         int startIdx = 1;
         int endIdx = content.indexOf('{');
-        Constants.JobKind jobKind = Constants.JobKind.valueOf(content.substring(startIdx, endIdx).toUpperCase());
+        JobKind jobKind = JobKind.valueOf(content.substring(startIdx, endIdx).toUpperCase());
         jobEntryData.put("jobKind", jobKind);
 
         startIdx = endIdx + 1;

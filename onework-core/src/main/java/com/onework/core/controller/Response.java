@@ -1,8 +1,11 @@
 package com.onework.core.controller;
 
 import lombok.Builder;
+import lombok.Cleanup;
 import lombok.Singular;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 @Builder
@@ -24,6 +27,16 @@ public class Response<T> {
         return Response.builder()
                 .code(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
                 .msg(msg)
+                .build();
+    }
+
+    public static Response error(Exception e) {
+        @Cleanup StringWriter sw = new StringWriter();
+        @Cleanup PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return Response.builder()
+                .code(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .msg(sw.toString())
                 .build();
     }
 

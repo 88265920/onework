@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.onework.core.ApplicationContextGetter;
 import com.onework.core.client.FlinkRestClient;
-import com.onework.core.common.Constants;
+import com.onework.core.enums.JobStatus;
 import com.onework.core.service.StreamJobService;
 import lombok.SneakyThrows;
 import org.quartz.JobExecutionContext;
@@ -28,10 +28,10 @@ public class StreamJobStatusTracker extends QuartzJobBean {
             JSONObject obj = restJobs.getJSONObject(i);
             restJobsMap.put(obj.getString("id"), obj);
         }
-        streamJobService.findByJobStatus(Constants.JobStatus.RUNNING).forEach(j -> {
+        streamJobService.findByJobStatus(JobStatus.RUNNING).forEach(j -> {
             JSONObject restJob = restJobsMap.get(j.getJobId());
             if (restJob == null || !restJob.getString("status").equals("RUNNING")) {
-                streamJobService.setStatusById(Constants.JobStatus.FAILED, j.getJobId());
+                streamJobService.setStatusById(JobStatus.FAILED, j.getJobId());
             }
         });
     }

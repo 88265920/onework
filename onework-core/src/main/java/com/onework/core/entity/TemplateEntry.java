@@ -1,7 +1,7 @@
 package com.onework.core.entity;
 
-import com.onework.core.common.Constants;
 import com.onework.core.converter.Map2JsonConverter;
+import com.onework.core.enums.TemplateKind;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ public class TemplateEntry extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NonNull
-    private Constants.TemplateKind templateKind;
+    private TemplateKind templateKind;
 
     @Lob
     @Column(columnDefinition = "text")
@@ -30,7 +30,7 @@ public class TemplateEntry extends BaseEntity {
     public TemplateEntry() {
     }
 
-    public TemplateEntry(String templateName, @NonNull Constants.TemplateKind templateKind,
+    public TemplateEntry(String templateName, @NonNull TemplateKind templateKind,
                          @NonNull Map<String, String> templateParams) {
         this.templateName = templateName;
         this.templateKind = templateKind;

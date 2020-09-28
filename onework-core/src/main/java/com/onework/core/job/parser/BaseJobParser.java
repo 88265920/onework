@@ -1,7 +1,9 @@
 package com.onework.core.job.parser;
 
 import com.google.common.collect.Sets;
-import com.onework.core.common.Constants;
+import com.onework.core.enums.JobKind;
+import com.onework.core.enums.StatementKind;
+import com.onework.core.enums.TemplateKind;
 import com.onework.core.job.parser.statement.StatementParser;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,22 +15,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class BaseJobParser<T> {
-    private Map<Constants.StatementKind, StatementParser> statementParsers = new EnumMap<>(Constants.StatementKind.class);
+    private Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
 
     private Set<String> jobKinds = Sets.newHashSet(
-            Stream.of(Constants.JobKind.values()).map(Enum::name).collect(Collectors.toList()));
+            Stream.of(JobKind.values()).map(Enum::name).collect(Collectors.toList()));
 
     private Set<String> templateKinds = Sets.newHashSet(
-            Stream.of(Constants.TemplateKind.values()).map(Enum::name).collect(Collectors.toList()));
+            Stream.of(TemplateKind.values()).map(Enum::name).collect(Collectors.toList()));
 
     private Set<String> statementKinds = Sets.newHashSet(
-            Stream.of(Constants.StatementKind.values()).map(Enum::name).collect(Collectors.toList()));
+            Stream.of(StatementKind.values()).map(Enum::name).collect(Collectors.toList()));
 
     public BaseJobParser() {
         bindParser(statementParsers);
     }
 
-    protected abstract void bindParser(Map<Constants.StatementKind, StatementParser> statementParsers);
+    protected abstract void bindParser(Map<StatementKind, StatementParser> statementParsers);
 
     protected abstract T onCreateJob(List<Map<String, Object>> statementsData);
 
@@ -63,15 +65,15 @@ public abstract class BaseJobParser<T> {
             }
             if (end) {
                 content = contentSb.toString();
-                Constants.StatementKind statementKind = Constants.StatementKind.SQL_STATEMENT;
+                StatementKind statementKind = StatementKind.SQL_STATEMENT;
                 if (content.startsWith("@")) {
                     String kindString = content.substring(1, content.indexOf('{')).toUpperCase();
                     if (jobKinds.contains(kindString)) {
-                        statementKind = Constants.StatementKind.JOB_ENTRY;
+                        statementKind = StatementKind.JOB_ENTRY;
                     } else if (templateKinds.contains(kindString)) {
-                        statementKind = Constants.StatementKind.TEMPLATE_ENTRY;
+                        statementKind = StatementKind.TEMPLATE_ENTRY;
                     } else if (statementKinds.contains(kindString)) {
-                        statementKind = Constants.StatementKind.valueOf(kindString);
+                        statementKind = StatementKind.valueOf(kindString);
                     }
                 }
                 StatementParser statementParser = statementParsers.get(statementKind);
@@ -88,7 +90,7 @@ public abstract class BaseJobParser<T> {
         return onCreateJob(statementsData);
     }
 
-    protected Constants.StatementKind getStatementKind(Map<String, Object> statementData) {
-        return (Constants.StatementKind) statementData.get("statementKind");
+    protected StatementKind getStatementKind(Map<String, Object> statementData) {
+        return (StatementKind) statementData.get("statementKind");
     }
 }
