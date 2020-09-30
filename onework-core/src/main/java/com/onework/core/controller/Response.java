@@ -3,6 +3,7 @@ package com.onework.core.controller;
 import lombok.Builder;
 import lombok.Cleanup;
 import lombok.Singular;
+import lombok.SneakyThrows;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,6 +31,7 @@ public class Response<T> {
                 .build();
     }
 
+    @SneakyThrows
     public static Response error(Exception e) {
         @Cleanup StringWriter sw = new StringWriter();
         @Cleanup PrintWriter pw = new PrintWriter(sw);

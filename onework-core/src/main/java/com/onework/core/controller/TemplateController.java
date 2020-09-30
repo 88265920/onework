@@ -28,9 +28,9 @@ public class TemplateController {
         this.templateParser = templateParser;
     }
 
-    @PostMapping("submit")
+    @PostMapping("create")
     @ResponseBody
-    public Response submit(@RequestParam("file") MultipartFile file) {
+    public Response create(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) return Response.error("文件不存在");
 
         String content;
@@ -41,7 +41,13 @@ public class TemplateController {
             return Response.error("文件解析失败");
         }
 
-        Template template = templateParser.parse(content);
+        Template template;
+        try {
+            template = templateParser.parse(content);
+        } catch (Exception e) {
+            return Response.error(e);
+        }
+
         if (templateService.existsByTemplateName(template.getTemplateName())) {
             return Response.error("模板已存在");
         } else {

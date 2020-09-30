@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StreamJobRepository extends JpaRepository<StreamJob, String> {
@@ -18,11 +19,8 @@ public interface StreamJobRepository extends JpaRepository<StreamJob, String> {
     @Query("select j from StreamJob j where j.jobStatus <> ?1")
     List<StreamJob> findByNotStatus(JobStatus jobStatus);
 
-    @Query("select j.jobId from StreamJob j where j.jobName = ?1")
-    String findIdByName(String jobName);
-
-    @Query("select j.jobStatus from StreamJob j where j.jobName = ?1")
-    JobStatus findStatusByName(String jobName);
+    @Query("select j from StreamJob j where j.jobName = ?1")
+    Optional<StreamJob> findByName(String jobName);
 
     @Modifying
     @Query("update StreamJob j set j.jobStatus = ?1 where j.jobId = ?2")

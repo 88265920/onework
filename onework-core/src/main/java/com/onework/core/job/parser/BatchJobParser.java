@@ -1,9 +1,9 @@
 package com.onework.core.job.parser;
 
+import com.google.common.collect.Sets;
 import com.onework.core.entity.BatchJob;
-import com.onework.core.entity.JobEntry;
 import com.onework.core.entity.SqlStatement;
-import com.onework.core.enums.JobKind;
+import com.onework.core.enums.EngineKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.job.parser.statement.DependentSqlParser;
 import com.onework.core.job.parser.statement.JobEntryParser;
@@ -11,18 +11,22 @@ import com.onework.core.job.parser.statement.SqlStatementParser;
 import com.onework.core.job.parser.statement.StatementParser;
 import com.onework.core.service.TemplateService;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.CronExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
 public class BatchJobParser extends BaseJobParser<BatchJob> {
+    private Set<String> engineKinds = Sets.newHashSet(
+            Stream.of(EngineKind.values()).map(Enum::name).collect(Collectors.toList()));
 
     private TemplateService templateService;
 
@@ -47,27 +51,21 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
                 case JOB_ENTRY:
+                    parseJobEntry(statementData, batchJob);
                     Map<String, String> jobParams = (Map<String, String>) statementData.get("jobParams");
-                    String jobName = jobParams.get("jobName");
-                    checkState(StringUtils.isNotEmpty(jobName));
-                    JobKind jobKind = (JobKind) statementData.get("jobKind");
-                    checkNotNull(jobKind);
-                    JobEntry jobEntry = new JobEntry(jobName, jobKind, jobParams);
-                    batchJob.setJobName(jobName);
-                    batchJob.setJobEntry(jobEntry);
+                    String engine = jobParams.get("engine");
+                    checkArgument(StringUtils.isNotEmpty(engine) && engineKinds.contains(engine.toUpperCase()));
+                    EngineKind engineKind = EngineKind.valueOf(engine.toUpperCase());
+                    batchJob.setEngineKind(engineKind);
                     String cronTime = jobParams.get("cronTime");
-                    checkState(StringUtils.isNotEmpty(cronTime));
+                    checkArgument(StringUtils.isNotEmpty(cronTime) && CronExpression.isValidExpression(cronTime));
                     batchJob.setCronTime(cronTime);
                     break;
                 case DEPENDENT_SQL:
-                    Map<String, String> dependentParams = (Map<String, String>) statementData.get("dependentParams");
-                    checkNotNull(dependentParams);
-                    jobName = dependentParams.get("jobName");
-                    checkState(StringUtils.isNotEmpty(jobName));
-                    dependentJobNames.add(jobName);
+                    parseDependentJob(statementData, dependentJobNames);
                     break;
                 case SQL_STATEMENT:
-                    checkState(statementData.containsKey("sqlStatements"));
+                    checkArgument(statementData.containsKey("sqlStatements"));
                     List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
                             .map(s -> new SqlStatement(batchJob.getJobName(), s)).collect(Collectors.toList());
                     templateService.templateReplace(sqlStatements);

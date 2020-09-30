@@ -23,24 +23,42 @@ public class QuartzJobService {
 
     @SneakyThrows
     public void addJob(Class<? extends Job> jobClass, String jobName, String jobGroupName, String cronTime,
-                       Map<String, Object> jobData) {
+                       Map<String, Object> jobData, boolean misFireDoNothing) {
         JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName).build();
         if (jobData != null && jobData.size() > 0) {
             jobDetail.getJobDataMap().putAll(jobData);
         }
+        CronScheduleBuilder scheduleBuilder;
+        if (misFireDoNothing) {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime).withMisfireHandlingInstructionDoNothing();
+        } else {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime);
+        }
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
-                .startAt(DateBuilder.futureDate(1, DateBuilder.IntervalUnit.SECOND))
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).startNow().build();
+                .withSchedule(scheduleBuilder).build();
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
     @SneakyThrows
-    public void updateJob(String jobName, String jobGroupName, String cronTime) {
+    public void updateJob(String jobName, String jobGroupName, String cronTime, boolean misFireDoNothing) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
         CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-        trigger = trigger.getTriggerBuilder().withIdentity(triggerKey)
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronTime)).build();
+        CronScheduleBuilder scheduleBuilder;
+        if (misFireDoNothing) {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime).withMisfireHandlingInstructionDoNothing();
+        } else {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime);
+        }
+        trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
         scheduler.rescheduleJob(triggerKey, trigger);
+    }
+
+    @SneakyThrows
+    public void removeJob(String jobName, String jobGroupName) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
+        scheduler.pauseTrigger(triggerKey);
+        scheduler.unscheduleJob(triggerKey);
+        scheduler.deleteJob(JobKey.jobKey(jobName, jobGroupName));
     }
 
     @SneakyThrows

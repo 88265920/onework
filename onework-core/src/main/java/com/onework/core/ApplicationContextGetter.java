@@ -4,6 +4,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+
 @Component
 public class ApplicationContextGetter implements ApplicationContextAware {
     private static ApplicationContext context;
@@ -17,7 +19,7 @@ public class ApplicationContextGetter implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext context) {
+    public void setApplicationContext(@Nonnull ApplicationContext context) {
         setContext(context);
     }
 }

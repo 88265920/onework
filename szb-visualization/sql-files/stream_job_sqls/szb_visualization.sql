@@ -1,4 +1,4 @@
-@stream_sql{jobName=szb_visualization,core=4,minState=2,maxState=3,
+@stream_sql{jobName=szb_visualization,parallelism=4,stateRetentionHour=2,
     jars='/home/kangjiao/jars/onework-function-1.0.0-SNAPSHOT.jar',
     gp.stateRedisHost=10.128.3.54,gp.stateRedisDb=15};
 

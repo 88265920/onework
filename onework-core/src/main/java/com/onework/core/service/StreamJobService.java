@@ -1,9 +1,14 @@
 package com.onework.core.service;
 
+import com.onework.core.client.FlinkRestClient;
+import com.onework.core.client.HdfsCheckpointManager;
 import com.onework.core.entity.StreamJob;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.enums.ResumeMethod;
+import com.onework.core.job.executor.StreamJobExecutor;
+import com.onework.core.job.parser.StreamJobParser;
 import com.onework.core.repository.StreamJobRepository;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +21,20 @@ import java.util.Set;
 @Service
 public class StreamJobService {
     private StreamJobRepository streamJobRepository;
+    private StreamJobParser streamJobParser;
+    private StreamJobExecutor streamJobExecutor;
+    private FlinkRestClient flinkRestClient;
+    private HdfsCheckpointManager hdfsCheckPointManager;
 
     @Autowired
-    public StreamJobService(StreamJobRepository streamJobRepository) {
+    public StreamJobService(StreamJobRepository streamJobRepository, StreamJobParser streamJobParser,
+                            StreamJobExecutor streamJobExecutor, FlinkRestClient flinkRestClient,
+                            HdfsCheckpointManager hdfsCheckPointManager) {
         this.streamJobRepository = streamJobRepository;
+        this.streamJobParser = streamJobParser;
+        this.streamJobExecutor = streamJobExecutor;
+        this.flinkRestClient = flinkRestClient;
+        this.hdfsCheckPointManager = hdfsCheckPointManager;
     }
 
     @Transactional
@@ -43,12 +58,8 @@ public class StreamJobService {
         return streamJobRepository.findByStatus(jobStatus);
     }
 
-    public String findIdByName(String jobName) {
-        return streamJobRepository.findIdByName(jobName);
-    }
-
-    public JobStatus findStatusByName(String jobName) {
-        return streamJobRepository.findStatusByName(jobName);
+    public StreamJob findByName(String jobName) {
+        return streamJobRepository.findByName(jobName).orElse(null);
     }
 
     public Set<String> getUsedJobIds() {
@@ -93,5 +104,35 @@ public class StreamJobService {
     @Transactional
     public void deleteByJobName(String jobName) {
         streamJobRepository.deleteById(jobName);
+    }
+
+    public StreamJob parseJobByContent(String content) {
+        return streamJobParser.parse(content);
+    }
+
+    public void executeJob(StreamJob job) {
+        streamJobExecutor.executeJob(job);
+    }
+
+    public void executeJobWithSavepoint(StreamJob job) {
+        streamJobExecutor.executeJobWithSavepoint(job);
+    }
+
+    public void executeJobWithoutState(StreamJob job) {
+        streamJobExecutor.executeJobWithoutState(job);
+    }
+
+    public boolean hasCheckPoint(String jobId) {
+        return hdfsCheckPointManager.hasCheckPoint(jobId);
+    }
+
+    @SneakyThrows
+    public boolean suspendJob(String jobId) {
+        return flinkRestClient.suspendJob(jobId);
+    }
+
+    @SneakyThrows
+    public String suspendJobWithSavepoint(String jobId) {
+        return flinkRestClient.suspendJobWithSavepoint(jobId);
     }
 }

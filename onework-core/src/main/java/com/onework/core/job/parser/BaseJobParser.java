@@ -1,18 +1,20 @@
 package com.onework.core.job.parser;
 
 import com.google.common.collect.Sets;
+import com.onework.core.entity.BaseJob;
+import com.onework.core.entity.JobEntry;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.enums.TemplateKind;
 import com.onework.core.job.parser.statement.StatementParser;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public abstract class BaseJobParser<T> {
     private Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
@@ -92,5 +94,27 @@ public abstract class BaseJobParser<T> {
 
     protected StatementKind getStatementKind(Map<String, Object> statementData) {
         return (StatementKind) statementData.get("statementKind");
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void parseJobEntry(Map<String, Object> statementData, BaseJob job) {
+        Map<String, String> jobParams = (Map<String, String>) statementData.get("jobParams");
+        checkNotNull(jobParams);
+        String jobName = jobParams.get("jobName");
+        checkArgument(StringUtils.isNotEmpty(jobName));
+        JobKind jobKind = (JobKind) statementData.get("jobKind");
+        checkNotNull(jobKind);
+        JobEntry jobEntry = new JobEntry(jobName, jobKind, jobParams);
+        job.setJobName(jobName);
+        job.setJobEntry(jobEntry);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void parseDependentJob(Map<String, Object> statementData, List<String> dependentJobNames) {
+        Map<String, String> dependentParams = (Map<String, String>) statementData.get("dependentParams");
+        checkArgument(MapUtils.isNotEmpty(dependentParams));
+        String jobName = dependentParams.get("jobName");
+        checkArgument(StringUtils.isNotEmpty(jobName));
+        dependentJobNames.add(jobName);
     }
 }
