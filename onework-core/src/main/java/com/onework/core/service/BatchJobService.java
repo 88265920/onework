@@ -58,5 +58,7 @@ public class BatchJobService {
     public void executeJob(Date fireTime, BatchJob job) {
         BatchJobExecutor batchJobExecutor = requireNonNull(batchJobExecutors.get(job.getEngineKind()));
         batchJobExecutor.executeJob(fireTime, job, executePositionTracker);
+        job.setJobStatus(JobStatus.RUNNING);
+        batchJobRepository.save(job);
     }
 }

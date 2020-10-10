@@ -26,7 +26,8 @@ public class JobEntryParser implements StatementParser {
         Map<String, String> jobParams = new HashMap<>();
         for (String mapString : mapStrings) {
             String[] paramSp = mapString.split("=");
-            jobParams.put(paramSp[0].trim(), paramSp[1]);
+            String value = paramSp[1].replaceAll("'", "");
+            jobParams.put(paramSp[0].trim(), value);
         }
 
         jobEntryData.put("jobParams", jobParams);
