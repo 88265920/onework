@@ -30,9 +30,11 @@ public class QuartzJobService {
         }
         CronScheduleBuilder scheduleBuilder;
         if (misFireDoNothing) {
+            // 不触发立即执行，等待下次Cron触发频率到达时刻开始按照Cron频率依次执行
             scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime).withMisfireHandlingInstructionDoNothing();
         } else {
-            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime);
+            // 以错过的第一个频率时间立刻开始执行，重做错过的所有频率周期后，当下一次触发频率发生时间大于当前时间后，再按照正常的Cron频率依次执行
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(cronTime).withMisfireHandlingInstructionIgnoreMisfires();
         }
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
                 .withSchedule(scheduleBuilder).build();

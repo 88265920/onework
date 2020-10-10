@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Service
@@ -23,7 +23,7 @@ public class BatchJobService {
     private BatchJobRepository batchJobRepository;
     private BatchJobParser batchJobParser;
     private Map<EngineKind, BatchJobExecutor> batchJobExecutors;
-    private ExecutePositionTracker executePositionTracker = (String jobName, String fireTime, int pos) ->
+    private ExecutePositionTracker executePositionTracker = (String jobName, Date fireTime, int pos) ->
             batchJobRepository.setFireTimeAndExecutePositionByName(fireTime, pos, jobName);
 
     @Autowired
@@ -56,8 +56,7 @@ public class BatchJobService {
     }
 
     public void executeJob(Date fireTime, BatchJob job) {
-        BatchJobExecutor batchJobExecutor = batchJobExecutors.get(job.getEngineKind());
-        checkNotNull(batchJobExecutor);
+        BatchJobExecutor batchJobExecutor = requireNonNull(batchJobExecutors.get(job.getEngineKind()));
         batchJobExecutor.executeJob(fireTime, job, executePositionTracker);
     }
 }

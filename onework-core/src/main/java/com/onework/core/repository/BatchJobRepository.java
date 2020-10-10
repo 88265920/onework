@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,5 +21,5 @@ public interface BatchJobRepository extends JpaRepository<BatchJob, String> {
 
     @Modifying
     @Query("update BatchJob  j set j.fireTime = ?1, j.executePosition = ?2 where j.jobName = ?3")
-    void setFireTimeAndExecutePositionByName(String fireTime, Integer executePosition, String jobName);
+    void setFireTimeAndExecutePositionByName(Date fireTime, Integer executePosition, String jobName);
 }

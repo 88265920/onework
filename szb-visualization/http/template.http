@@ -4,7 +4,7 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="t_ud_kafka_conf.sql"
 
-< ../sql-files/template_sqls/t_ud_kafka_conf.sql
+< ../sql-files/stream_template_sqls/t_ud_kafka_conf.sql
 --WebAppBoundary--
 
 ###
@@ -22,7 +22,7 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="t_dispatch_slave_base_data_mysql_conf.sql"
 
-< ../sql-files/template_sqls/t_dispatch_slave_base_data_mysql_conf.sql
+< ../sql-files/stream_template_sqls/t_dispatch_slave_base_data_mysql_conf.sql
 --WebAppBoundary--
 
 ###
@@ -41,7 +41,7 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="t_bdnode5_szb_visualization_mysql_conf.sql"
 
-< ../sql-files/template_sqls/t_bdnode5_szb_visualization_mysql_conf.sql
+< ../sql-files/stream_template_sqls/t_bdnode5_szb_visualization_mysql_conf.sql
 --WebAppBoundary--
 
 ###
@@ -59,7 +59,7 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="file"; filename="t_dispatch_card_kafka_conf.sql"
 
-< ../sql-files/template_sqls/t_dispatch_card_kafka_conf.sql
+< ../sql-files/stream_template_sqls/t_dispatch_card_kafka_conf.sql
 --WebAppBoundary--
 
 ###

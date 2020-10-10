@@ -14,7 +14,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 public abstract class BaseJobParser<T> {
     private Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
@@ -78,8 +80,7 @@ public abstract class BaseJobParser<T> {
                         statementKind = StatementKind.valueOf(kindString);
                     }
                 }
-                StatementParser statementParser = statementParsers.get(statementKind);
-                checkNotNull(statementParser);
+                StatementParser statementParser = requireNonNull(statementParsers.get(statementKind));
                 Map<String, Object> statementData = statementParser.parse(content);
                 statementData.put("statementKind", statementKind);
                 statementsData.add(statementData);
@@ -98,12 +99,10 @@ public abstract class BaseJobParser<T> {
 
     @SuppressWarnings("unchecked")
     protected void parseJobEntry(Map<String, Object> statementData, BaseJob job) {
-        Map<String, String> jobParams = (Map<String, String>) statementData.get("jobParams");
-        checkNotNull(jobParams);
+        Map<String, String> jobParams = (Map<String, String>) requireNonNull(statementData.get("jobParams"));
         String jobName = jobParams.get("jobName");
         checkArgument(StringUtils.isNotEmpty(jobName));
-        JobKind jobKind = (JobKind) statementData.get("jobKind");
-        checkNotNull(jobKind);
+        JobKind jobKind = (JobKind) requireNonNull(statementData.get("jobKind"));
         JobEntry jobEntry = new JobEntry(jobName, jobKind, jobParams);
         job.setJobName(jobName);
         job.setJobEntry(jobEntry);

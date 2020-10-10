@@ -5,7 +5,6 @@ import com.onework.core.client.HdfsCheckpointManager;
 import com.onework.core.entity.StreamJob;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.enums.ResumeMethod;
-import com.onework.core.job.executor.StreamJobExecutor;
 import com.onework.core.job.parser.StreamJobParser;
 import com.onework.core.repository.StreamJobRepository;
 import lombok.SneakyThrows;
@@ -22,17 +21,14 @@ import java.util.Set;
 public class StreamJobService {
     private StreamJobRepository streamJobRepository;
     private StreamJobParser streamJobParser;
-    private StreamJobExecutor streamJobExecutor;
     private FlinkRestClient flinkRestClient;
     private HdfsCheckpointManager hdfsCheckPointManager;
 
     @Autowired
     public StreamJobService(StreamJobRepository streamJobRepository, StreamJobParser streamJobParser,
-                            StreamJobExecutor streamJobExecutor, FlinkRestClient flinkRestClient,
-                            HdfsCheckpointManager hdfsCheckPointManager) {
+                            FlinkRestClient flinkRestClient, HdfsCheckpointManager hdfsCheckPointManager) {
         this.streamJobRepository = streamJobRepository;
         this.streamJobParser = streamJobParser;
-        this.streamJobExecutor = streamJobExecutor;
         this.flinkRestClient = flinkRestClient;
         this.hdfsCheckPointManager = hdfsCheckPointManager;
     }
@@ -108,18 +104,6 @@ public class StreamJobService {
 
     public StreamJob parseJobByContent(String content) {
         return streamJobParser.parse(content);
-    }
-
-    public void executeJob(StreamJob job) {
-        streamJobExecutor.executeJob(job);
-    }
-
-    public void executeJobWithSavepoint(StreamJob job) {
-        streamJobExecutor.executeJobWithSavepoint(job);
-    }
-
-    public void executeJobWithoutState(StreamJob job) {
-        streamJobExecutor.executeJobWithoutState(job);
     }
 
     public boolean hasCheckPoint(String jobId) {

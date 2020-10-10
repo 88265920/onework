@@ -3,25 +3,33 @@ package com.onework.core.job.quartz;
 import com.onework.core.ApplicationContextGetter;
 import com.onework.core.entity.BatchJob;
 import com.onework.core.service.BatchJobService;
-import org.apache.commons.lang3.StringUtils;
-import org.quartz.JobDataMap;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
+@Slf4j
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public class BatchJobQuartzExecutor extends QuartzJobBean {
     private BatchJobService batchJobService = ApplicationContextGetter.getContext().getBean(BatchJobService.class);
 
     @Override
-    protected void executeInternal(JobExecutionContext context) {
-        System.out.println(context.getFireTime());
-        JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-        String jobName = jobDataMap.getString("jobName");
-        checkArgument(StringUtils.isNotEmpty(jobName));
-        BatchJob batchJob = batchJobService.findByName(jobName).orElse(null);
-        checkNotNull(batchJob);
-        batchJobService.executeJob(context.getFireTime(), batchJob);
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        log.info(context.getFireTime().toString());
+        String jobName = context.getJobDetail().getKey().getName();
+        try {
+            BatchJob batchJob = requireNonNull(batchJobService.findByName(jobName).orElse(null));
+            batchJobService.executeJob(context.getFireTime(), batchJob);
+        } catch (Exception e) {
+            log.error("", e);
+            JobExecutionException jee = new JobExecutionException(e);
+            jee.setUnscheduleAllTriggers(true);
+            throw jee;
+        }
     }
 }

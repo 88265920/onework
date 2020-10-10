@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static com.alibaba.fastjson.JSON.parseObject;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Component
@@ -38,8 +38,10 @@ public class FlinkRestClient {
     }
 
     public JSONArray jobs() throws IOException {
-        HttpGet get = new HttpGet(String.format("http://%s:%s/jobs", yarnClusterClient.getSessionHost(),
-                yarnClusterClient.getSessionPort()));
+        String url = String.format("http://%s:%s/jobs", yarnClusterClient.getSessionHost(),
+                yarnClusterClient.getSessionPort());
+        log.info("Jobs http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
         checkState(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
@@ -48,8 +50,10 @@ public class FlinkRestClient {
     }
 
     public boolean suspendJob(@NonNull String jobId) throws IOException {
-        HttpGet get = new HttpGet(String.format("http://%s:%s/proxy/%s/jobs/%s/yarn-cancel",
-                yarnClusterClient.getRestHost(), yarnClusterClient.getRestPort(), yarnClusterClient.getApplicationId(), jobId));
+        String url = String.format("http://%s:%s/proxy/%s/jobs/%s/yarn-cancel", yarnClusterClient.getRestHost(),
+                yarnClusterClient.getRestPort(), yarnClusterClient.getApplicationId(), jobId);
+        log.info("Suspend job http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
 
@@ -59,6 +63,7 @@ public class FlinkRestClient {
     public String suspendJobWithSavepoint(@NonNull String jobId) throws IOException, InterruptedException {
         String savepointUrl = String.format("http://%s:%s/jobs/%s/savepoints", yarnClusterClient.getSessionHost(),
                 yarnClusterClient.getSessionPort(), jobId);
+        log.info("Savepoint http url: {}", savepointUrl);
         HttpPost post = new HttpPost(savepointUrl);
         post.addHeader("Content-Type", "application/json");
         String postJson = String.format("{\"cancel-job\": \"true\",\"target-directory\": \"%s\"}",
@@ -72,6 +77,7 @@ public class FlinkRestClient {
         checkState(StringUtils.isNotEmpty(requestId));
 
         HttpGet get = new HttpGet(savepointUrl + '/' + requestId);
+        log.info("RequestId http url: {}", savepointUrl + '/' + requestId);
         for (int i = 0; i < 200; i++) {
             Thread.sleep(10000);
             response = client.execute(get);
@@ -80,15 +86,12 @@ public class FlinkRestClient {
             checkState(code == HttpStatus.SC_OK);
             respData = EntityUtils.toString(response.getEntity(), UTF_8);
             log.info(respData);
-            JSONObject obj = parseObject(respData);
-            checkNotNull(obj);
-            JSONObject statusObj = obj.getJSONObject("status");
-            checkNotNull(statusObj);
+            JSONObject obj = requireNonNull(parseObject(respData));
+            JSONObject statusObj = requireNonNull(obj.getJSONObject("status"));
             String statusId = statusObj.getString("id");
             checkState(StringUtils.isNotEmpty(statusId));
             if (statusId.equals("COMPLETED")) {
-                JSONObject operationObj = obj.getJSONObject("operation");
-                checkNotNull(operationObj);
+                JSONObject operationObj = requireNonNull(obj.getJSONObject("operation"));
                 return operationObj.getString("location");
             }
         }

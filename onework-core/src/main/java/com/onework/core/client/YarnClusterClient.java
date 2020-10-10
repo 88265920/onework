@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.onework.core.conf.OneWorkConf;
 import com.onework.core.utils.HadoopXmlUtils;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -12,17 +13,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Size;
-import java.io.IOException;
 import java.util.Map;
 
 import static com.alibaba.fastjson.JSON.parseObject;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 @Component
@@ -43,30 +42,27 @@ public class YarnClusterClient {
         this.oneWorkConf = oneWorkConf;
     }
 
+    @SneakyThrows
     public void discover() {
-        try {
-            yarnConfigs = HadoopXmlUtils.readXML(oneWorkConf.getYarn().getSiteFile());
-            yarnWebAddressDiscover();
+        yarnConfigs = HadoopXmlUtils.readXML(oneWorkConf.getYarn().getSiteFile());
+        yarnWebAddressDiscover();
 
-            JSONObject appObj = yarnApplicationDetails(oneWorkConf.getYarn().getQueue(),
-                    oneWorkConf.getYarn().getSessionAppName());
-            if (appObj != null) {
-                applicationId = appObj.getString("id");
-                yarnSessionWebEndpoint(appObj.getString("amContainerLogs"));
-            }
-        } catch (DocumentException | IOException e) {
-            log.error("", e);
-        }
+        JSONObject appObj = requireNonNull(yarnApplicationDetails(oneWorkConf.getYarn().getQueue(),
+                oneWorkConf.getYarn().getSessionAppName()));
+        applicationId = appObj.getString("id");
+        yarnSessionWebEndpoint(appObj.getString("amContainerLogs"));
     }
 
-    private void yarnWebAddressDiscover() throws IOException {
+    @SneakyThrows
+    private void yarnWebAddressDiscover() {
         String yarnWebAddr = yarnConfigs.get(YARN_WEB_ADDR);
-        @Size(min = 2)
         String[] yarnWebAddrSp = yarnWebAddr.split(":");
+        checkState(yarnWebAddrSp.length == 2);
         String yarnWebHost = yarnWebAddrSp[0];
         String yarnWebPort = yarnWebAddrSp[1];
-        HttpGet get = new HttpGet(String.format("http://%s:%s/ws/v1/cluster", yarnWebHost,
-                Integer.parseInt(yarnWebPort)));
+        String url = String.format("http://%s:%s/ws/v1/cluster", yarnWebHost, Integer.parseInt(yarnWebPort));
+        log.info("Yarn cluster http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
         checkState(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
@@ -74,10 +70,11 @@ public class YarnClusterClient {
         restPort = Integer.parseInt(yarnWebPort);
     }
 
-    private JSONObject yarnApplicationDetails(@NonNull String queue, @NonNull String appNameKey)
-            throws IOException {
-        HttpGet get = new HttpGet(String.format("http://%s:%s/ws/v1/cluster/apps?queue=%s",
-                restHost, restPort, queue));
+    @SneakyThrows
+    private JSONObject yarnApplicationDetails(@NonNull String queue, @NonNull String appNameKey) {
+        String url = String.format("http://%s:%s/ws/v1/cluster/apps?queue=%s", restHost, restPort, queue);
+        log.info("Yarn app detail http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
         checkState(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
@@ -94,9 +91,11 @@ public class YarnClusterClient {
         return null;
     }
 
-    private String yarnApplicationState(@NonNull String applicationId) throws IOException {
-        HttpGet get = new HttpGet(String.format("http://%s:%s/ws/v1/cluster/apps/%s/state",
-                restHost, restPort, applicationId));
+    @SneakyThrows
+    private String yarnApplicationState(@NonNull String applicationId) {
+        String url = String.format("http://%s:%s/ws/v1/cluster/apps/%s/state", restHost, restPort, applicationId);
+        log.info("Yarn app state http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
         checkState(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
@@ -104,8 +103,11 @@ public class YarnClusterClient {
         return parseObject(respData).getString("state");
     }
 
-    private void yarnSessionWebEndpoint(@NonNull String containerLogPath) throws IOException {
-        HttpGet get = new HttpGet(String.format("%s/jobmanager.log/?start=0&end=61440", containerLogPath));
+    @SneakyThrows
+    private void yarnSessionWebEndpoint(@NonNull String containerLogPath) {
+        String url = String.format("%s/jobmanager.log/?start=0&end=61440", containerLogPath);
+        log.info("Yarn session endpoint http url: {}", url);
+        HttpGet get = new HttpGet(url);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse response = client.execute(get);
         checkState(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);

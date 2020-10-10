@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
 
     @SneakyThrows
     @Override
-    public void executeJob(String fireTime, @NonNull BatchJob job, @Nonnull ExecutePositionTracker tracker) {
+    public void executeJob(Date fireTime, @NonNull BatchJob job, @Nonnull ExecutePositionTracker tracker) {
         Map<String, String> jobParams = job.getJobEntry().getJobParams();
         checkArgument(MapUtils.isNotEmpty(jobParams));
         String driver = jobParams.get("driver");
@@ -40,20 +41,24 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
         Statement statement = null;
         try {
             connection = getConnection(url, user, password);
+            connection.setAutoCommit(false);
             statement = connection.createStatement();
             List<SqlStatement> sqlStatements = job.getSqlStatements();
             for (int i = 0; i < sqlStatements.size(); i++) {
                 SqlStatement sqlStatement = sqlStatements.get(i);
                 if (costMillis > 900000) {
                     statement.close();
+                    connection.commit();
                     connection.close();
                     connection = getConnection(url, user, password);
+                    connection.setAutoCommit(false);
                     statement = connection.createStatement();
                     costMillis = 0;
                 }
                 costMillis += executeSql(sqlStatement.getSqlContent(), statement);
                 tracker.executePosition(job.getJobName(), fireTime, i);
             }
+            connection.commit();
         } finally {
             if (statement != null) statement.close();
             if (connection != null) connection.close();

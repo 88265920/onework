@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.onework.core.entity.StreamJob;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.enums.ResumeMethod;
+import com.onework.core.job.executor.StreamJobExecutor;
 import com.onework.core.job.quartz.StreamJobCheckpointCleaner;
 import com.onework.core.job.quartz.StreamJobStatusTracker;
 import com.onework.core.service.QuartzJobService;
@@ -28,11 +29,14 @@ import static com.google.common.base.Preconditions.checkState;
 public class StreamJobController {
     private static final String JOB_NOT_FOUND = "任务不存在";
     private StreamJobService streamJobService;
+    private StreamJobExecutor streamJobExecutor;
     private QuartzJobService quartzJobService;
 
     @Autowired
-    public StreamJobController(StreamJobService streamJobService, QuartzJobService quartzJobService) {
+    public StreamJobController(StreamJobService streamJobService, StreamJobExecutor streamJobExecutor,
+                               QuartzJobService quartzJobService) {
         this.streamJobService = streamJobService;
+        this.streamJobExecutor = streamJobExecutor;
         this.quartzJobService = quartzJobService;
     }
 
@@ -78,7 +82,7 @@ public class StreamJobController {
         } else {
             streamJob.setJobStatus(JobStatus.CREATED);
             try {
-                streamJobService.executeJob(streamJob);
+                streamJobExecutor.executeJob(streamJob);
             } catch (Exception e) {
                 return Response.error(e);
             }
@@ -149,7 +153,7 @@ public class StreamJobController {
         JobStatus jobStatus = streamJob.getJobStatus();
         if (jobStatus.equals(JobStatus.SUSPEND) || jobStatus.equals(JobStatus.FAILED)) {
             try {
-                streamJobService.executeJobWithoutState(streamJob);
+                streamJobExecutor.executeJobWithoutState(streamJob);
             } catch (Exception e) {
                 return Response.error(e);
             }
@@ -224,9 +228,9 @@ public class StreamJobController {
         try {
             ResumeMethod resumeMethod = oldStreamJob.getResumeMethod();
             if (resumeMethod.equals(ResumeMethod.CHECKPOINT)) {
-                streamJobService.executeJob(streamJob);
+                streamJobExecutor.executeJob(streamJob);
             } else if (resumeMethod.equals(ResumeMethod.SAVEPOINT)) {
-                streamJobService.executeJobWithSavepoint(streamJob);
+                streamJobExecutor.executeJobWithSavepoint(streamJob);
             }
         } catch (Exception e) {
             return Response.error(e);

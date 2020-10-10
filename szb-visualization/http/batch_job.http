@@ -1,0 +1,14 @@
+GET http://localhost:8080/batchJob/jobs
+
+###
+
+POST http://localhost:8080/batchJob/create
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="batch.sql"
+
+< ../sql-files/batch_job_sqls/batch.sql
+--WebAppBoundary--
+
+###
