@@ -1,14 +1,12 @@
 package com.onework.core.controller;
 
-import lombok.Builder;
-import lombok.Cleanup;
-import lombok.Singular;
-import lombok.SneakyThrows;
+import lombok.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
+@Data
 @Builder
 @SuppressWarnings("rawtypes")
 public class Response<T> {
