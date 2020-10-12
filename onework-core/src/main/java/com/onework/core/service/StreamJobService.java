@@ -46,10 +46,6 @@ public class StreamJobService {
         return streamJobRepository.findByNotStatus(JobStatus.CREATED);
     }
 
-    public StreamJob findByJobName(String jobName) {
-        return streamJobRepository.findById(jobName).orElse(null);
-    }
-
     public List<StreamJob> findByJobStatus(JobStatus jobStatus) {
         return streamJobRepository.findByStatus(jobStatus);
     }

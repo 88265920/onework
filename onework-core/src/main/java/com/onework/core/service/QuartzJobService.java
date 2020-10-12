@@ -21,6 +21,11 @@ public class QuartzJobService {
         scheduler.start();
     }
 
+    public void addJob(Class<? extends Job> jobClass, String jobName, String jobGroupName, String cronTime,
+                       Map<String, Object> jobData) {
+        addJob(jobClass, jobName, jobGroupName, cronTime, jobData, false);
+    }
+
     @SneakyThrows
     public void addJob(Class<? extends Job> jobClass, String jobName, String jobGroupName, String cronTime,
                        Map<String, Object> jobData, boolean misFireDoNothing) {
@@ -39,6 +44,10 @@ public class QuartzJobService {
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
                 .withSchedule(scheduleBuilder).build();
         scheduler.scheduleJob(jobDetail, trigger);
+    }
+
+    public void updateJob(String jobName, String jobGroupName, String cronTime) {
+        updateJob(jobName, jobGroupName, cronTime, false);
     }
 
     @SneakyThrows

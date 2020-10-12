@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -47,8 +50,13 @@ public class BatchJobService {
         return batchJobRepository.findByNotStatus(JobStatus.CREATED);
     }
 
-    public Optional<BatchJob> findByName(String jobName) {
-        return batchJobRepository.findByName(jobName);
+    public BatchJob findByName(String jobName) {
+        return batchJobRepository.findByName(jobName).orElse(null);
+    }
+
+    @Transactional
+    public void deleteByJobName(String jobName) {
+        batchJobRepository.deleteById(jobName);
     }
 
     public BatchJob parseJobByContent(String content) {
@@ -58,7 +66,5 @@ public class BatchJobService {
     public void executeJob(Date fireTime, BatchJob job) {
         BatchJobExecutor batchJobExecutor = requireNonNull(batchJobExecutors.get(job.getEngineKind()));
         batchJobExecutor.executeJob(fireTime, job, executePositionTracker);
-        job.setJobStatus(JobStatus.RUNNING);
-        batchJobRepository.save(job);
     }
 }

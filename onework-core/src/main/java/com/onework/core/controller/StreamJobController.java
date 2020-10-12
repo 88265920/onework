@@ -21,13 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.onework.core.common.JobErrorMsg.*;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "streamJob")
 @SuppressWarnings("rawtypes")
 public class StreamJobController {
-    private static final String JOB_NOT_FOUND = "任务不存在";
+    private static final String QUARTZ_JOB_GROUP_NAME = "onework-stream-system-job";
     private StreamJobService streamJobService;
     private StreamJobExecutor streamJobExecutor;
     private QuartzJobService quartzJobService;
@@ -60,14 +61,14 @@ public class StreamJobController {
     @PostMapping("create")
     @ResponseBody
     @Transactional
-    public Response create(@RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) return Response.error("文件不存在或内容为空");
+    public Response create(@NonNull MultipartFile file) {
+        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
 
         String content;
         try {
             content = new String(ByteStreams.toByteArray(file.getInputStream()));
         } catch (IOException e) {
-            return Response.error("文件解析失败");
+            return Response.error(FILE_PARSING_FAILED);
         }
 
         StreamJob streamJob;
@@ -78,7 +79,7 @@ public class StreamJobController {
         }
 
         if (streamJobService.existsByJobName(streamJob.getJobName())) {
-            return Response.error("任务已存在");
+            return Response.error(JOB_EXISTED);
         } else {
             streamJob.setJobStatus(JobStatus.CREATED);
             try {
@@ -94,14 +95,14 @@ public class StreamJobController {
     @PostMapping("upgrade")
     @ResponseBody
     @Transactional
-    public Response upgrade(@RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) return Response.error("文件不存在或内容为空");
+    public Response upgrade(@NonNull MultipartFile file) {
+        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
 
         String content;
         try {
             content = new String(ByteStreams.toByteArray(file.getInputStream()));
         } catch (IOException e) {
-            return Response.error("文件解析失败");
+            return Response.error(FILE_PARSING_FAILED);
         }
 
         StreamJob streamJob;
@@ -110,7 +111,7 @@ public class StreamJobController {
         } catch (Exception e) {
             return Response.error(e);
         }
-        StreamJob oldStreamJob = streamJobService.findByJobName(streamJob.getJobName());
+        StreamJob oldStreamJob = streamJobService.findByName(streamJob.getJobName());
         if (oldStreamJob == null) return Response.error(JOB_NOT_FOUND);
 
         streamJob.setCheckpointJobId(oldStreamJob.getCheckpointJobId());
@@ -136,7 +137,7 @@ public class StreamJobController {
             return resumeJob(streamJob, streamJob);
         }
 
-        return Response.error("任务恢复失败");
+        return Response.error(JOB_RESUME_FAILED);
     }
 
     @GetMapping("resumeWithoutState")
@@ -160,7 +161,7 @@ public class StreamJobController {
             return Response.ok();
         }
 
-        return Response.error("任务恢复失败");
+        return Response.error(JOB_RESUME_FAILED);
     }
 
     @GetMapping("suspend")
@@ -175,14 +176,14 @@ public class StreamJobController {
         }
         String jobId = streamJob.getJobId();
         checkState(StringUtils.isNotEmpty(jobId));
-        if (!streamJobService.hasCheckPoint(jobId)) return Response.error("没有Checkpoint信息");
+        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NOT_CHECKPOINT);
         boolean success;
         try {
             success = streamJobService.suspendJob(jobId);
         } catch (Exception e) {
             return Response.error(e);
         }
-        if (!success) return Response.error("任务暂停失败");
+        if (!success) return Response.error(JOB_SUSPEND_FAILED);
         streamJobService.setStatusById(JobStatus.SUSPEND, jobId);
         streamJobService.setCheckpointJobIdById(jobId);
         streamJobService.setResumeMethodById(ResumeMethod.CHECKPOINT, jobId);
@@ -202,10 +203,10 @@ public class StreamJobController {
         }
         String jobId = streamJob.getJobId();
         checkState(StringUtils.isNotEmpty(jobId));
-        if (!streamJobService.hasCheckPoint(jobId)) return Response.error("没有Checkpoint信息");
+        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NOT_CHECKPOINT);
         try {
             String savepoint = streamJobService.suspendJobWithSavepoint(jobId);
-            log.info("suspend savepoint = ".concat(savepoint));
+            log.info("suspend savepoint = {}", savepoint);
             streamJobService.setStatusAndSavepointById(JobStatus.SUSPEND, savepoint, jobId);
             streamJobService.setResumeMethodById(ResumeMethod.SAVEPOINT, jobId);
         } catch (Exception e) {
@@ -240,18 +241,17 @@ public class StreamJobController {
     }
 
     private void createQuartzSystemJob() {
-        String jobGroupName = "system";
         String jobName = "streamJobStatusTracker";
-        if (!quartzJobService.existsJob(jobName, jobGroupName)) {
+        if (!quartzJobService.existsJob(jobName, QUARTZ_JOB_GROUP_NAME)) {
             // 每5分钟执行一次实时任务状态检测
-            quartzJobService.addJob(StreamJobStatusTracker.class, jobName, jobGroupName, "0 0/5 * * * ?",
+            quartzJobService.addJob(StreamJobStatusTracker.class, jobName, QUARTZ_JOB_GROUP_NAME, "0 0/5 * * * ?",
                     Maps.newHashMap(), true);
         }
 
         jobName = "streamJobCheckpointCleaner";
-        if (!quartzJobService.existsJob(jobName, jobGroupName)) {
+        if (!quartzJobService.existsJob(jobName, QUARTZ_JOB_GROUP_NAME)) {
             // 每天凌晨2点清理无效的checkpoint/savepoint
-            quartzJobService.addJob(StreamJobCheckpointCleaner.class, jobName, jobGroupName, "0 0 2 * * ? ",
+            quartzJobService.addJob(StreamJobCheckpointCleaner.class, jobName, QUARTZ_JOB_GROUP_NAME, "0 0 2 * * ?",
                     Maps.newHashMap(), true);
         }
     }

@@ -155,7 +155,7 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         checkState(!dependentJobNames.isEmpty());
         StatementSet statementSet = tableEnv.createStatementSet();
         for (String dependentJobName : dependentJobNames) {
-            StreamJob dependentJob = streamJobService.findByJobName(dependentJobName);
+            StreamJob dependentJob = streamJobService.findByName(dependentJobName);
             executeSql(dependentJob.getSqlStatements(), tableEnv, statementSet);
         }
         executeSql(job.getSqlStatements(), tableEnv, statementSet);
