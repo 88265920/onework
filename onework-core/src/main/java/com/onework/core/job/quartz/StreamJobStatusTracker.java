@@ -7,12 +7,14 @@ import com.onework.core.client.FlinkRestClient;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.service.StreamJobService;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class StreamJobStatusTracker extends QuartzJobBean {
     private StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);
     private FlinkRestClient flinkRestClient = ApplicationContextGetter.getContext().getBean(FlinkRestClient.class);
@@ -20,7 +22,7 @@ public class StreamJobStatusTracker extends QuartzJobBean {
     @SneakyThrows
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        System.out.println(context.getFireTime());
+        log.info("fire time: {}", context.getFireTime());
         JSONArray restJobs;
         restJobs = flinkRestClient.jobs();
         Map<String, JSONObject> restJobsMap = new HashMap<>();

@@ -20,7 +20,7 @@ public class BatchJobQuartzExecutor extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        log.info(context.getFireTime().toString());
+        log.info("fire time: {}", context.getFireTime());
         String jobName = context.getJobDetail().getKey().getName();
         try {
             BatchJob batchJob = requireNonNull(batchJobService.findByName(jobName));
