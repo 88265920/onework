@@ -1,6 +1,7 @@
 package com.onework.core.controller;
 
 import com.google.common.io.ByteStreams;
+import com.onework.core.common.Response;
 import com.onework.core.entity.Template;
 import com.onework.core.enums.TemplateStatus;
 import com.onework.core.job.parser.TemplateParser;

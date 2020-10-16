@@ -10,7 +10,7 @@ CREATE TABLE tbl_base_line (
     org_id varchar(50)
 ) WITH (
     'table-name' = 'tbl_base_line',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 组织信息(维表)
@@ -20,7 +20,7 @@ CREATE TABLE tbl_base_organization (
     org_parent_id VARCHAR(50)
 ) WITH (
     'table-name' = 'tbl_base_organization',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 线路路径(维表)
@@ -31,7 +31,7 @@ CREATE TABLE tbl_base_line_route (
     route_operate_type TINYINT COMMENT '路径营运类型 1营运 2非营运'
 ) WITH (
     'table-name' = 'tbl_base_line_route',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 线路路径时段信息(维表)
@@ -46,7 +46,7 @@ CREATE TABLE tbl_base_route_period (
     period_type TINYINT COMMENT '时段类型 1：平日2：双休日3：节假日 4：节假日前夕'
 ) WITH (
     'table-name' = 'tbl_base_route_period',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 公交日历信息(维表)
@@ -55,7 +55,7 @@ CREATE TABLE tbl_base_calendar (
     calendar_type TINYINT COMMENT '日期类型 1：平日  2：双休日  3：节假日  4：节假日前夕'
 ) WITH (
     'table-name' = 'tbl_base_calendar',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 车辆信息表(维表)
@@ -64,7 +64,7 @@ CREATE TABLE tbl_base_bus (
     bus_id VARCHAR(32) COMMENT 'bus主键ID'
 ) WITH (
     'table-name' = 'tbl_base_bus',
-    {dispatch_slave_base_data_mysql_conf}
+    t{dispatch_slave_base_data_mysql_conf}
 );
 
 -- 公交营运班次(结果维表)
@@ -81,7 +81,7 @@ CREATE TABLE temporal_bus_operating_schedule (
     PRIMARY KEY (id) NOT ENFORCED
 ) WITH (
     'table-name' = 'temporal_bus_operating_schedule',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );
 
 
@@ -106,7 +106,7 @@ CREATE TABLE tbl_ehualu_trip (
     'topic' = 'dispatch-mysql-slave.db_trip_gather.tbl_ehualu_trip',
     'properties.group.id' = 'szb_visualization',
     'format' = 'debezium-json',
-    {ud_kafka_conf}
+    t{ud_kafka_conf}
 );
 
 -- 深圳通刷卡数据(主表)
@@ -122,7 +122,7 @@ CREATE TABLE szt_pay_card (
     WATERMARK FOR ts AS ts - INTERVAL '10' SECOND
 ) PARTITIONED BY (cardNo) WITH (
     'properties.group.id' = 'szb_visualization_dev',
-    {dispatch_card_kafka_conf}
+    t{dispatch_card_kafka_conf}
 );
 
 
@@ -139,7 +139,7 @@ CREATE TABLE rt_bus_operating_schedule_4_org (
     PRIMARY KEY (run_date, bus_company, bus_team, peak_period) NOT ENFORCED
 ) WITH (
     'table-name' = 'rt_bus_operating_schedule_4_org',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );
 
 -- 公交营运载客-组织维度(结果表)
@@ -154,7 +154,7 @@ CREATE TABLE rt_bus_operating_passengers_4_org (
     PRIMARY KEY (run_date, bus_company, bus_team, peak_period) NOT ENFORCED
 ) WITH (
     'table-name' = 'rt_bus_operating_passengers_4_org',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );
 
 -- 公交营运班次-线路维度(结果表)
@@ -169,7 +169,7 @@ CREATE TABLE rt_bus_operating_schedule_4_line (
     PRIMARY KEY (run_date, line_name, direction, run_hour) NOT ENFORCED
 ) WITH (
     'table-name' = 'rt_bus_operating_schedule_4_line',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );
 
 -- 公交营运载客-线路维度(结果表)
@@ -184,7 +184,7 @@ CREATE TABLE rt_bus_operating_passengers_4_line (
     PRIMARY KEY (run_date, line_name, direction, run_hour) NOT ENFORCED
 ) WITH (
     'table-name' = 'rt_bus_operating_passengers_4_line',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );
 
 
@@ -205,5 +205,5 @@ CREATE TABLE rt_abnormal_departure_interval (
     PRIMARY KEY (id) NOT ENFORCED
 ) WITH (
     'table-name' = 'rt_abnormal_departure_interval',
-    {bdnode5_szb_visualization_mysql_conf}
+    t{bdnode5_szb_visualization_mysql_conf}
 );

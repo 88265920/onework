@@ -1,4 +1,4 @@
-package com.onework.core.controller;
+package com.onework.core.common;
 
 import lombok.*;
 

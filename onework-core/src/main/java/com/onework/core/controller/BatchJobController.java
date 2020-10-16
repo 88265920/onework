@@ -1,6 +1,7 @@
 package com.onework.core.controller;
 
 import com.google.common.io.ByteStreams;
+import com.onework.core.common.Response;
 import com.onework.core.entity.BatchJob;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.job.quartz.BatchJobQuartzExecutor;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +67,7 @@ public class BatchJobController {
         } else {
             batchJob.setJobStatus(JobStatus.CREATED);
             try {
-                batchJobService.executeJob(new Date(), batchJob);
+                batchJobService.executeJob(batchJob);
                 Map<String, Object> jobData = new HashMap<>();
                 jobData.put("jobName", batchJob.getJobName());
                 quartzJobService.addJob(BatchJobQuartzExecutor.class, batchJob.getJobName(), QUARTZ_JOB_GROUP_NAME,
@@ -110,6 +110,7 @@ public class BatchJobController {
         batchJob.setExecutePosition(oldBatchJob.getExecutePosition());
 
         try {
+            batchJobService.executeJob(batchJob);
             checkState(quartzJobService.existsJob(batchJob.getJobName(), QUARTZ_JOB_GROUP_NAME));
             quartzJobService.updateJob(batchJob.getJobName(), QUARTZ_JOB_GROUP_NAME, batchJob.getCronTime());
             batchJob.setJobStatus(JobStatus.RUNNING);

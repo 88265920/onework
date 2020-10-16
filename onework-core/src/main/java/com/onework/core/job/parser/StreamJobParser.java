@@ -7,7 +7,8 @@ import com.onework.core.job.parser.statement.DependentSqlParser;
 import com.onework.core.job.parser.statement.JobEntryParser;
 import com.onework.core.job.parser.statement.SqlStatementParser;
 import com.onework.core.job.parser.statement.StatementParser;
-import com.onework.core.service.TemplateService;
+import com.onework.core.pattern.PatternReplacerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,10 +20,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
 public class StreamJobParser extends BaseJobParser<StreamJob> {
-    private TemplateService templateService;
+    private PatternReplacerFactory patternReplacerFactory;
 
-    public StreamJobParser(TemplateService templateService) {
-        this.templateService = templateService;
+    @Autowired
+    public StreamJobParser(PatternReplacerFactory patternReplacerFactory) {
+        this.patternReplacerFactory = patternReplacerFactory;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class StreamJobParser extends BaseJobParser<StreamJob> {
                     checkArgument(statementData.containsKey("sqlStatements"));
                     List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
                             .map(s -> new SqlStatement(streamJob.getJobName(), s)).collect(Collectors.toList());
-                    templateService.templateReplace(sqlStatements);
+                    patternReplacerFactory.patternReplace(sqlStatements);
                     jobSqlStatements.addAll(sqlStatements);
                     break;
                 default:

@@ -110,7 +110,7 @@ public class QuartzJobService {
                                 Map<String, Object> jobData) throws SchedulerException {
         jobData.put("jobName", jobKey.getName());
         jobData.put("jobGroupName", jobKey.getGroup());
-        jobData.put("description", "触发器:" + trigger.getKey());
+        jobData.put("description", "trigger:" + trigger.getKey());
         Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
         jobData.put("jobStatus", triggerState.name());
         if (trigger instanceof CronTrigger) {

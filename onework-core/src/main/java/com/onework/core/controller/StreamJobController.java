@@ -2,6 +2,7 @@ package com.onework.core.controller;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
+import com.onework.core.common.Response;
 import com.onework.core.entity.StreamJob;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.enums.ResumeMethod;
@@ -176,7 +177,7 @@ public class StreamJobController {
         }
         String jobId = streamJob.getJobId();
         checkState(StringUtils.isNotEmpty(jobId));
-        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NOT_CHECKPOINT);
+        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NO_CHECKPOINT);
         boolean success;
         try {
             success = streamJobService.suspendJob(jobId);
@@ -203,7 +204,7 @@ public class StreamJobController {
         }
         String jobId = streamJob.getJobId();
         checkState(StringUtils.isNotEmpty(jobId));
-        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NOT_CHECKPOINT);
+        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NO_CHECKPOINT);
         try {
             String savepoint = streamJobService.suspendJobWithSavepoint(jobId);
             log.info("suspend savepoint = {}", savepoint);

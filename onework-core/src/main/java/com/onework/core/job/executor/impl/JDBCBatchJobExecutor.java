@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -25,7 +24,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
 
     @SneakyThrows
     @Override
-    public void executeJob(Date fireTime, @NonNull BatchJob job, @Nonnull ExecutePositionTracker tracker) {
+    public void executeJob(Date fireTime, @NonNull BatchJob job, @NonNull ExecutePositionTracker tracker) {
         Map<String, String> jobParams = job.getJobEntry().getJobParams();
         checkArgument(MapUtils.isNotEmpty(jobParams));
         String driver = jobParams.get("driver");
@@ -56,7 +55,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
                     costMillis = 0;
                 }
                 costMillis += executeSql(sqlStatement.getSqlContent(), statement);
-                tracker.executePosition(job.getJobName(), fireTime, i);
+                if (fireTime != null) tracker.executePosition(job.getJobName(), fireTime, i);
             }
             connection.commit();
         } finally {

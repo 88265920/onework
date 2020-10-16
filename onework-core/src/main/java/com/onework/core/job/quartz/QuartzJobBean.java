@@ -26,7 +26,7 @@ public abstract class QuartzJobBean implements Job {
 
         log.info("Execute the scheduled task, description={}, jobData={}", context.getJobDetail().getDescription(),
                 new JSONObject(context.getJobDetail().getJobDataMap()).toJSONString());
-        this.executeInternal(context);
+        executeInternal(context);
         log.info("Successfully execute the scheduled task, description={}", context.getJobDetail().getDescription());
     }
 

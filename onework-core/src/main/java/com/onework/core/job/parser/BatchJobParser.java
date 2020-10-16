@@ -9,9 +9,10 @@ import com.onework.core.job.parser.statement.DependentSqlParser;
 import com.onework.core.job.parser.statement.JobEntryParser;
 import com.onework.core.job.parser.statement.SqlStatementParser;
 import com.onework.core.job.parser.statement.StatementParser;
-import com.onework.core.service.TemplateService;
+import com.onework.core.pattern.PatternReplacerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,11 +28,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class BatchJobParser extends BaseJobParser<BatchJob> {
     private Set<String> engineKinds = Sets.newHashSet(
             Stream.of(EngineKind.values()).map(Enum::name).collect(Collectors.toList()));
+    private PatternReplacerFactory patternReplacerFactory;
 
-    private TemplateService templateService;
-
-    public BatchJobParser(TemplateService templateService) {
-        this.templateService = templateService;
+    @Autowired
+    public BatchJobParser(PatternReplacerFactory patternReplacerFactory) {
+        this.patternReplacerFactory = patternReplacerFactory;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
                     checkArgument(statementData.containsKey("sqlStatements"));
                     List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
                             .map(s -> new SqlStatement(batchJob.getJobName(), s)).collect(Collectors.toList());
-                    templateService.templateReplace(sqlStatements);
+                    patternReplacerFactory.patternReplace(sqlStatements);
                     jobSqlStatements.addAll(sqlStatements);
                     break;
                 default:
