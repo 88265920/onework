@@ -1,12 +1,11 @@
 package com.onework.core.entity;
 
+import com.onework.core.enums.JobKind;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -16,6 +15,10 @@ public class SqlStatement extends BasePKEntity {
     @NonNull
     private String jobName;
 
+    @NonNull
+    @Enumerated(value = EnumType.STRING)
+    private JobKind jobKind;
+
     @Lob
     @Column(columnDefinition = "text")
     @NonNull
@@ -24,8 +27,9 @@ public class SqlStatement extends BasePKEntity {
     public SqlStatement() {
     }
 
-    public SqlStatement(@NonNull String jobName, @NonNull String sqlContent) {
+    public SqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
         this.jobName = jobName;
+        this.jobKind = jobKind;
         this.sqlContent = sqlContent;
     }
 }

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Converter
-public class List2StringConverter implements AttributeConverter<List<String>, String> {
+public class ListConverter implements AttributeConverter<List<String>, String> {
     @Override
     public String convertToDatabaseColumn(List<String> list) {
         return String.join(",", list);

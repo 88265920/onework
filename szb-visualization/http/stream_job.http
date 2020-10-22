@@ -1,3 +1,7 @@
+GET http://localhost:8080/streamJob/create_system_jobs
+
+###
+
 GET http://localhost:8080/streamJob/jobs
 
 ###

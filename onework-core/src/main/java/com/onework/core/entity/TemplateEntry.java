@@ -1,6 +1,6 @@
 package com.onework.core.entity;
 
-import com.onework.core.converter.Map2JsonConverter;
+import com.onework.core.converter.MapConverter;
 import com.onework.core.enums.TemplateKind;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ public class TemplateEntry extends BaseEntity {
 
     @Lob
     @Column(columnDefinition = "text")
-    @Convert(converter = Map2JsonConverter.class)
+    @Convert(converter = MapConverter.class)
     @NonNull
     private Map<String, String> templateParams;
 

@@ -1,6 +1,6 @@
 package com.onework.core.entity;
 
-import com.onework.core.converter.List2StringConverter;
+import com.onework.core.converter.ListConverter;
 import com.onework.core.enums.JobStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,23 +17,21 @@ public abstract class BaseJob extends BaseEntity {
     @NonNull
     private String jobName;
 
-    @Enumerated(value = EnumType.STRING)
     @NonNull
+    @Enumerated(value = EnumType.STRING)
     private JobStatus jobStatus;
 
     @NonNull
-    @JoinColumn(name = "jobName")
-    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
     private JobEntry jobEntry;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "jobName")
     @NonNull
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
     private List<SqlStatement> sqlStatements;
 
     @Lob
     @Column(columnDefinition = "text")
-    @Convert(converter = List2StringConverter.class)
+    @Convert(converter = ListConverter.class)
     private List<String> dependentJobNames;
 
     public BaseJob() {

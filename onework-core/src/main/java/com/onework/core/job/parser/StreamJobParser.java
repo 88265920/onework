@@ -2,6 +2,7 @@ package com.onework.core.job.parser;
 
 import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.StreamJob;
+import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.job.parser.statement.DependentSqlParser;
 import com.onework.core.job.parser.statement.JobEntryParser;
@@ -52,7 +53,8 @@ public class StreamJobParser extends BaseJobParser<StreamJob> {
                 case SQL_STATEMENT:
                     checkArgument(statementData.containsKey("sqlStatements"));
                     List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new SqlStatement(streamJob.getJobName(), s)).collect(Collectors.toList());
+                            .map(s -> new SqlStatement(streamJob.getJobName(), JobKind.STREAM_SQL, s))
+                            .collect(Collectors.toList());
                     patternReplacerFactory.patternReplace(sqlStatements);
                     jobSqlStatements.addAll(sqlStatements);
                     break;

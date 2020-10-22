@@ -24,8 +24,8 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
 
     @SneakyThrows
     @Override
-    public void executeJob(Date fireTime, @NonNull BatchJob job, @NonNull ExecutePositionTracker tracker) {
-        Map<String, String> jobParams = job.getJobEntry().getJobParams();
+    public void executeJob(Date fireTime, @NonNull BatchJob batchJob, @NonNull ExecutePositionTracker tracker) {
+        Map<String, String> jobParams = batchJob.getJobEntry().getJobParams();
         checkArgument(MapUtils.isNotEmpty(jobParams));
         String driver = jobParams.get("driver");
         checkArgument(StringUtils.isNotEmpty(driver));
@@ -42,7 +42,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
             connection = getConnection(url, user, password);
             connection.setAutoCommit(false);
             statement = connection.createStatement();
-            List<SqlStatement> sqlStatements = job.getSqlStatements();
+            List<SqlStatement> sqlStatements = batchJob.getSqlStatements();
             for (int i = 0; i < sqlStatements.size(); i++) {
                 SqlStatement sqlStatement = sqlStatements.get(i);
                 if (costMillis > 900000) {
@@ -55,7 +55,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
                     costMillis = 0;
                 }
                 costMillis += executeSql(sqlStatement.getSqlContent(), statement);
-                if (fireTime != null) tracker.executePosition(job.getJobName(), fireTime, i);
+                if (fireTime != null) tracker.executePosition(batchJob.getJobName(), fireTime, i);
             }
             connection.commit();
         } finally {

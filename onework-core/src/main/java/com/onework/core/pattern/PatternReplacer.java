@@ -13,7 +13,7 @@ import static com.onework.core.common.JobErrorMsg.PATTERN_NAME_ERROR;
 import static com.onework.core.common.JobErrorMsg.PATTERN_PARAM_ERROR;
 
 public abstract class PatternReplacer {
-    private static final String TAG_PATTERN_FORMAT = "^(%s)\\{[a-zA-Z0-9_-]+((,[a-zA-Z0-9_-]+)+)?\\}$";
+    private static final String TAG_PATTERN_FORMAT = "(%s)\\{[\\'a-zA-Z0-9_-]+((,[\\'a-zA-Z0-9_-]+)+)?\\}$";
 
     protected abstract String tagPattern();
 

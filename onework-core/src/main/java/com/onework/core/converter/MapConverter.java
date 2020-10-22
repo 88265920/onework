@@ -8,7 +8,7 @@ import javax.persistence.Converter;
 import java.util.Map;
 
 @Converter
-public class Map2JsonConverter implements AttributeConverter<Map<String, String>, String> {
+public class MapConverter implements AttributeConverter<Map<String, String>, String> {
     @Override
     public String convertToDatabaseColumn(Map<String, String> map) {
         return JSON.toJSONString(map);

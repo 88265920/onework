@@ -6,5 +6,5 @@ import lombok.NonNull;
 import java.util.Date;
 
 public interface BatchJobExecutor {
-    void executeJob(Date fireTime, @NonNull BatchJob job, @NonNull ExecutePositionTracker tracker);
+    void executeJob(Date fireTime, @NonNull BatchJob batchJob, @NonNull ExecutePositionTracker tracker);
 }
