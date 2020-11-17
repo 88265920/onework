@@ -45,7 +45,7 @@ onework:
   yarn:
     site-file: /home/kangjiao/hadoop_conf/yarn-site-dd.xml
     queue: root.streaming
-    session-appname: streamworks
+    session-appname: onework
   hdfs:
     file-owner: hdfs
     core-site-file: /home/kangjiao/hadoop_conf/core-site-dd.xml
