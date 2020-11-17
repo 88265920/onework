@@ -2,7 +2,6 @@ package com.onework.core.job.parser;
 
 import com.google.common.collect.Sets;
 import com.onework.core.entity.BaseJob;
-import com.onework.core.entity.JobEntry;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.enums.TemplateKind;
@@ -19,15 +18,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 public abstract class BaseJobParser<T> {
-    private Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
+    private final Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
 
-    private Set<String> jobKinds = Sets.newHashSet(
+    private final Set<String> jobKinds = Sets.newHashSet(
             Stream.of(JobKind.values()).map(Enum::name).collect(Collectors.toList()));
 
-    private Set<String> templateKinds = Sets.newHashSet(
+    private final Set<String> templateKinds = Sets.newHashSet(
             Stream.of(TemplateKind.values()).map(Enum::name).collect(Collectors.toList()));
 
-    private Set<String> statementKinds = Sets.newHashSet(
+    private final Set<String> statementKinds = Sets.newHashSet(
             Stream.of(StatementKind.values()).map(Enum::name).collect(Collectors.toList()));
 
     public BaseJobParser() {
@@ -99,13 +98,13 @@ public abstract class BaseJobParser<T> {
 
     @SuppressWarnings("unchecked")
     protected void parseJobEntry(Map<String, Object> statementData, BaseJob job) {
-        Map<String, String> jobParams = (Map<String, String>) requireNonNull(statementData.get("jobParams"));
-        String jobName = jobParams.get("jobName");
+        Map<String, String> jobArguments = (Map<String, String>) requireNonNull(statementData.get("jobArguments"));
+        String jobName = jobArguments.get("jobName");
         checkArgument(StringUtils.isNotEmpty(jobName));
         JobKind jobKind = (JobKind) requireNonNull(statementData.get("jobKind"));
-        JobEntry jobEntry = new JobEntry(jobName, jobKind, jobParams);
         job.setJobName(jobName);
-        job.setJobEntry(jobEntry);
+        job.setJobKind(jobKind);
+        job.setJobArguments(jobArguments);
     }
 
     @SuppressWarnings("unchecked")

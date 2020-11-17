@@ -1,7 +1,7 @@
 package com.onework.core.job.parser;
 
-import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.StreamJob;
+import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.job.parser.statement.DependentSqlParser;
@@ -40,7 +40,7 @@ public class StreamJobParser extends BaseJobParser<StreamJob> {
     protected StreamJob onCreateJob(List<Map<String, Object>> statementsData) {
         StreamJob streamJob = new StreamJob();
         List<String> dependentJobNames = new ArrayList<>();
-        List<SqlStatement> jobSqlStatements = new ArrayList<>();
+        List<StreamSqlStatement> jobStreamSqlStatements = new ArrayList<>();
         for (Map<String, Object> statementData : statementsData) {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
@@ -52,18 +52,18 @@ public class StreamJobParser extends BaseJobParser<StreamJob> {
                     break;
                 case SQL_STATEMENT:
                     checkArgument(statementData.containsKey("sqlStatements"));
-                    List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new SqlStatement(streamJob.getJobName(), JobKind.STREAM_SQL, s))
+                    List<StreamSqlStatement> streamSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
+                            .map(s -> new StreamSqlStatement(streamJob.getJobName(), JobKind.STREAM_SQL, s))
                             .collect(Collectors.toList());
-                    patternReplacerFactory.patternReplace(sqlStatements);
-                    jobSqlStatements.addAll(sqlStatements);
+                    patternReplacerFactory.patternReplace(streamSqlStatements);
+                    jobStreamSqlStatements.addAll(streamSqlStatements);
                     break;
                 default:
                     break;
             }
         }
         streamJob.setDependentJobNames(dependentJobNames);
-        streamJob.setSqlStatements(jobSqlStatements);
+        streamJob.setStreamSqlStatements(jobStreamSqlStatements);
         return streamJob;
     }
 }

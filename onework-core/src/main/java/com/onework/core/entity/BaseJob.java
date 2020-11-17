@@ -1,6 +1,8 @@
 package com.onework.core.entity;
 
 import com.onework.core.converter.ListConverter;
+import com.onework.core.converter.MapConverter;
+import com.onework.core.enums.JobKind;
 import com.onework.core.enums.JobStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,6 +10,7 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @MappedSuperclass
@@ -21,13 +24,15 @@ public abstract class BaseJob extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private JobStatus jobStatus;
 
+    @Enumerated(value = EnumType.STRING)
     @NonNull
-    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
-    private JobEntry jobEntry;
+    private JobKind jobKind;
 
+    @Lob
+    @Column(columnDefinition = "text")
+    @Convert(converter = MapConverter.class)
     @NonNull
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
-    private List<SqlStatement> sqlStatements;
+    private Map<String, String> jobArguments;
 
     @Lob
     @Column(columnDefinition = "text")

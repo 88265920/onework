@@ -1,6 +1,6 @@
 package com.onework.core.pattern;
 
-import com.onework.core.entity.SqlStatement;
+import com.onework.core.entity.StreamSqlStatement;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,15 +16,15 @@ public class PatternReplacerFactory {
         runtimePatternReplacers.add(new FunctionReplacer());
     }
 
-    public void patternReplace(List<SqlStatement> sqlStatements) {
-        for (SqlStatement sqlStatement : sqlStatements) {
-            sqlStatement.setSqlContent(patternReplace(sqlStatement.getSqlContent()));
+    public void patternReplace(List<StreamSqlStatement> streamSqlStatements) {
+        for (StreamSqlStatement streamSqlStatement : streamSqlStatements) {
+            streamSqlStatement.setSqlContent(patternReplace(streamSqlStatement.getSqlContent()));
         }
     }
 
-    public void runtimePatternReplace(List<SqlStatement> sqlStatements) {
-        for (SqlStatement sqlStatement : sqlStatements) {
-            sqlStatement.setSqlContent(runtimePatternReplace(sqlStatement.getSqlContent()));
+    public void runtimePatternReplace(List<StreamSqlStatement> streamSqlStatements) {
+        for (StreamSqlStatement streamSqlStatement : streamSqlStatements) {
+            streamSqlStatement.setSqlContent(runtimePatternReplace(streamSqlStatement.getSqlContent()));
         }
     }
 

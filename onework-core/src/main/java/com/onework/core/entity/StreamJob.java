@@ -4,14 +4,16 @@ import com.onework.core.enums.ResumeMethod;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
 public class StreamJob extends BaseJob {
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
+    private List<StreamSqlStatement> streamSqlStatements;
+
     private String jobId;
 
     private String checkpointJobId;

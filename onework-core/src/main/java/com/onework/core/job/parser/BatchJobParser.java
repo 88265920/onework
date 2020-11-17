@@ -2,7 +2,7 @@ package com.onework.core.job.parser;
 
 import com.google.common.collect.Sets;
 import com.onework.core.entity.BatchJob;
-import com.onework.core.entity.SqlStatement;
+import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.enums.EngineKind;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
@@ -48,7 +48,7 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
     protected BatchJob onCreateJob(List<Map<String, Object>> statementsData) {
         BatchJob batchJob = new BatchJob();
         List<String> dependentJobNames = new ArrayList<>();
-        List<SqlStatement> jobSqlStatements = new ArrayList<>();
+        List<StreamSqlStatement> jobStreamSqlStatements = new ArrayList<>();
         for (Map<String, Object> statementData : statementsData) {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
@@ -68,18 +68,18 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
                     break;
                 case SQL_STATEMENT:
                     checkArgument(statementData.containsKey("sqlStatements"));
-                    List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new SqlStatement(batchJob.getJobName(), JobKind.BATCH_SQL, s))
+                    List<StreamSqlStatement> streamSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
+                            .map(s -> new StreamSqlStatement(batchJob.getJobName(), JobKind.BATCH_SQL, s))
                             .collect(Collectors.toList());
-                    patternReplacerFactory.patternReplace(sqlStatements);
-                    jobSqlStatements.addAll(sqlStatements);
+                    patternReplacerFactory.patternReplace(streamSqlStatements);
+                    jobStreamSqlStatements.addAll(streamSqlStatements);
                     break;
                 default:
                     break;
             }
         }
         batchJob.setDependentJobNames(dependentJobNames);
-        batchJob.setSqlStatements(jobSqlStatements);
+        batchJob.setStreamSqlStatements(jobStreamSqlStatements);
         return batchJob;
     }
 }

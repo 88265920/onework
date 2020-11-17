@@ -1,7 +1,7 @@
 package com.onework.core.job.executor.impl;
 
 import com.onework.core.entity.BatchJob;
-import com.onework.core.entity.SqlStatement;
+import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.job.executor.BatchJobExecutor;
 import com.onework.core.job.executor.ExecutePositionTracker;
 import lombok.NonNull;
@@ -25,14 +25,14 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
     @SneakyThrows
     @Override
     public void executeJob(Date fireTime, @NonNull BatchJob batchJob, @NonNull ExecutePositionTracker tracker) {
-        Map<String, String> jobParams = batchJob.getJobEntry().getJobParams();
-        checkArgument(MapUtils.isNotEmpty(jobParams));
-        String driver = jobParams.get("driver");
+        Map<String, String> jobArguments = batchJob.getJobArguments();
+        checkArgument(MapUtils.isNotEmpty(jobArguments));
+        String driver = jobArguments.get("driver");
         checkArgument(StringUtils.isNotEmpty(driver));
-        String url = jobParams.get("url");
+        String url = jobArguments.get("url");
         checkArgument(StringUtils.isNotEmpty(url));
-        String user = jobParams.get("user");
-        String password = jobParams.get("password");
+        String user = jobArguments.get("user");
+        String password = jobArguments.get("password");
 
         Class.forName(driver);
         long costMillis = 0;
@@ -42,9 +42,9 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
             connection = getConnection(url, user, password);
             connection.setAutoCommit(false);
             statement = connection.createStatement();
-            List<SqlStatement> sqlStatements = batchJob.getSqlStatements();
-            for (int i = 0; i < sqlStatements.size(); i++) {
-                SqlStatement sqlStatement = sqlStatements.get(i);
+            List<StreamSqlStatement> streamSqlStatements = batchJob.getStreamSqlStatements();
+            for (int i = 0; i < streamSqlStatements.size(); i++) {
+                StreamSqlStatement streamSqlStatement = streamSqlStatements.get(i);
                 if (costMillis > 900000) {
                     statement.close();
                     connection.commit();
@@ -54,7 +54,7 @@ public class JDBCBatchJobExecutor implements BatchJobExecutor {
                     statement = connection.createStatement();
                     costMillis = 0;
                 }
-                costMillis += executeSql(sqlStatement.getSqlContent(), statement);
+                costMillis += executeSql(streamSqlStatement.getSqlContent(), statement);
                 if (fireTime != null) tracker.executePosition(batchJob.getJobName(), fireTime, i);
             }
             connection.commit();

@@ -25,14 +25,14 @@ public class JobEntryParser implements StatementParser {
         checkState(endIdx > 0);
         String paramsContent = content.substring(startIdx, endIdx);
         String[] mapStrings = paramsContent.split(",");
-        Map<String, String> jobParams = new HashMap<>();
+        Map<String, String> jobArguments = new HashMap<>();
         for (String mapString : mapStrings) {
             String[] paramSp = mapString.split("=");
             checkState(paramSp.length == 2);
-            jobParams.put(paramSp[0].trim(), paramSp[1].replace("'", ""));
+            jobArguments.put(paramSp[0].trim(), paramSp[1].replace("'", ""));
         }
 
-        jobEntryData.put("jobParams", jobParams);
+        jobEntryData.put("jobArguments", jobArguments);
 
         return jobEntryData;
     }

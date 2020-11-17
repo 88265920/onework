@@ -1,38 +1,35 @@
 package com.onework.core.entity;
 
-import com.onework.core.converter.MapConverter;
 import com.onework.core.enums.JobKind;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.Map;
 
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class JobEntry extends BaseEntity {
-    @Id
+public class BatchSqlStatement extends BasePKEntity {
+
     @NonNull
     private String jobName;
 
-    @Enumerated(value = EnumType.STRING)
     @NonNull
+    @Enumerated(value = EnumType.STRING)
     private JobKind jobKind;
 
     @Lob
     @Column(columnDefinition = "text")
-    @Convert(converter = MapConverter.class)
     @NonNull
-    private Map<String, String> jobParams;
+    private String sqlContent;
 
-    public JobEntry() {
+    public BatchSqlStatement() {
     }
 
-    public JobEntry(String jobName, @NonNull JobKind jobKind, @NonNull Map<String, String> jobParams) {
+    public BatchSqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
         this.jobName = jobName;
         this.jobKind = jobKind;
-        this.jobParams = jobParams;
+        this.sqlContent = sqlContent;
     }
 }

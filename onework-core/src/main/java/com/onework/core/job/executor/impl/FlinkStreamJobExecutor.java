@@ -3,8 +3,8 @@ package com.onework.core.job.executor.impl;
 import com.onework.core.client.HdfsCheckpointManager;
 import com.onework.core.client.YarnClusterClient;
 import com.onework.core.conf.OneWorkConf;
-import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.StreamJob;
+import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.job.executor.StreamJobExecutor;
 import com.onework.core.service.StreamJobService;
@@ -63,25 +63,25 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         if (StringUtils.isNotEmpty(job.getCheckpointJobId())) {
             String savepoint = hdfsCheckPointManager.getLatestCheckPoint(job.getCheckpointJobId());
             checkState(StringUtils.isNotEmpty(savepoint));
-            StreamTableEnvironment tableEnv = createExecutor(job.getJobEntry().getJobParams(), savepoint);
+            StreamTableEnvironment tableEnv = createExecutor(job.getJobArguments(), savepoint);
             execute(job, tableEnv);
         }
     }
 
     @Override
     public void executeJobWithSavepoint(@NonNull StreamJob job) {
-        StreamTableEnvironment tableEnv = createExecutor(job.getJobEntry().getJobParams(), job.getSavepoint());
+        StreamTableEnvironment tableEnv = createExecutor(job.getJobArguments(), job.getSavepoint());
         execute(job, tableEnv);
     }
 
     @Override
     public void executeJobWithoutState(@NonNull StreamJob job) {
-        StreamTableEnvironment tableEnv = createExecutor(job.getJobEntry().getJobParams(), null);
+        StreamTableEnvironment tableEnv = createExecutor(job.getJobArguments(), null);
         execute(job, tableEnv);
     }
 
-    private StreamTableEnvironment createExecutor(Map<String, String> jobParams, String savepoint) {
-        String jarsParam = jobParams.get("jars");
+    private StreamTableEnvironment createExecutor(Map<String, String> jobArguments, String savepoint) {
+        String jarsParam = jobArguments.get("jars");
         StreamExecutionEnvironment env;
         Configuration clientConfig = new Configuration();
         if (StringUtils.isNotEmpty(savepoint)) {
@@ -101,7 +101,7 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
 
         env.setRestartStrategy(RestartStrategies.noRestart());
 
-        String parallelism = jobParams.get("parallelism");
+        String parallelism = jobArguments.get("parallelism");
         checkArgument(StringUtils.isNotEmpty(parallelism));
         env.setParallelism(Integer.parseInt(parallelism));
 
@@ -117,7 +117,7 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         TableConfig tableConfig = tableEnv.getConfig();
         tableConfig.getConfiguration().setString("table.exec.sink.not-null-enforcer", "drop");
 
-        String stateRetentionHour = jobParams.get("stateRetentionHour");
+        String stateRetentionHour = jobArguments.get("stateRetentionHour");
         if (StringUtils.isNotEmpty(stateRetentionHour)) {
             checkArgument(Integer.parseInt(stateRetentionHour) > 0);
             tableConfig.setIdleStateRetentionTime(Time.hours(Integer.parseInt(stateRetentionHour)),
@@ -132,7 +132,7 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         }
 
         Map<String, String> globalJobParams = new HashMap<>();
-        for (Map.Entry<String, String> entry : jobParams.entrySet()) {
+        for (Map.Entry<String, String> entry : jobArguments.entrySet()) {
             String key = entry.getKey();
             if (key.startsWith("gp.")) {
                 key = key.substring(key.indexOf('.') + 1);
@@ -148,17 +148,17 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
     }
 
     private void execute(StreamJob job, StreamTableEnvironment tableEnv) {
-        Map<String, String> jobParams = job.getJobEntry().getJobParams();
-        String isDependentJob = jobParams.get("dependent_job");
+        Map<String, String> jobArguments = job.getJobArguments();
+        String isDependentJob = jobArguments.get("dependent_job");
         if (isDependentJob != null && isDependentJob.equalsIgnoreCase("true")) return;
         List<String> dependentJobNames = job.getDependentJobNames();
         checkState(!dependentJobNames.isEmpty());
         StatementSet statementSet = tableEnv.createStatementSet();
         for (String dependentJobName : dependentJobNames) {
             StreamJob dependentJob = streamJobService.findByName(dependentJobName);
-            executeSql(dependentJob.getSqlStatements(), tableEnv, statementSet);
+            executeSql(dependentJob.getStreamSqlStatements(), tableEnv, statementSet);
         }
-        executeSql(job.getSqlStatements(), tableEnv, statementSet);
+        executeSql(job.getStreamSqlStatements(), tableEnv, statementSet);
         TableResult tableResult = statementSet.execute();
         Optional<JobClient> jobClient = tableResult.getJobClient();
         String jobId = null;
@@ -172,10 +172,10 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         }
     }
 
-    private void executeSql(@NonNull List<SqlStatement> sqlStatements, StreamTableEnvironment tableEnv,
+    private void executeSql(@NonNull List<StreamSqlStatement> streamSqlStatements, StreamTableEnvironment tableEnv,
                             StatementSet statementSet) {
-        for (SqlStatement sqlStatement : sqlStatements) {
-            String sql = sqlStatement.getSqlContent();
+        for (StreamSqlStatement streamSqlStatement : streamSqlStatements) {
+            String sql = streamSqlStatement.getSqlContent();
             log.info(sql);
             if (sql.startsWith("INSERT") || sql.startsWith("insert")) {
                 statementSet.addInsertSql(sql);

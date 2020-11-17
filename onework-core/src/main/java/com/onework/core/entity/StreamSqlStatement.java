@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class SqlStatement extends BasePKEntity {
+public class StreamSqlStatement extends BasePKEntity {
 
     @NonNull
     private String jobName;
@@ -24,10 +24,10 @@ public class SqlStatement extends BasePKEntity {
     @NonNull
     private String sqlContent;
 
-    public SqlStatement() {
+    public StreamSqlStatement() {
     }
 
-    public SqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
+    public StreamSqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
         this.jobName = jobName;
         this.jobKind = jobKind;
         this.sqlContent = sqlContent;

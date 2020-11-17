@@ -1,6 +1,6 @@
 package com.onework.core.job.parser;
 
-import com.onework.core.entity.SqlStatement;
+import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.entity.Template;
 import com.onework.core.entity.TemplateEntry;
 import com.onework.core.enums.JobKind;
@@ -40,10 +40,10 @@ public class TemplateParser extends BaseJobParser<Template> {
                     template.setTemplateName(templateName);
                     break;
                 case SQL_STATEMENT:
-                    List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new SqlStatement(template.getTemplateName(), JobKind.TEMPLATE_SQL, s))
+                    List<StreamSqlStatement> streamSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
+                            .map(s -> new StreamSqlStatement(template.getTemplateName(), JobKind.TEMPLATE_SQL, s))
                             .collect(Collectors.toList());
-                    template.setTemplateContent(sqlStatements.get(0).getSqlContent());
+                    template.setTemplateContent(streamSqlStatements.get(0).getSqlContent());
                     break;
                 default:
                     break;
