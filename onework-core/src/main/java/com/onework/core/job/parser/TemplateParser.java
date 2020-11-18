@@ -1,8 +1,7 @@
 package com.onework.core.job.parser;
 
-import com.onework.core.entity.StreamSqlStatement;
+import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.Template;
-import com.onework.core.entity.TemplateEntry;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
 import com.onework.core.enums.TemplateKind;
@@ -32,18 +31,17 @@ public class TemplateParser extends BaseJobParser<Template> {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
                 case TEMPLATE_ENTRY:
-                    Map<String, String> templateParams = (Map<String, String>) statementData.get("templateParams");
-                    String templateName = templateParams.get("templateName");
-                    TemplateEntry templateEntry = new TemplateEntry(templateName,
-                            (TemplateKind) statementData.get("templateKind"), templateParams);
-                    template.setTemplateEntry(templateEntry);
+                    Map<String, String> templateArguments = (Map<String, String>) statementData.get("templateArguments");
+                    String templateName = templateArguments.get("templateName");
+                    template.setTemplateKind((TemplateKind) statementData.get("templateKind"));
+                    template.setTemplateArguments(templateArguments);
                     template.setTemplateName(templateName);
                     break;
                 case SQL_STATEMENT:
-                    List<StreamSqlStatement> streamSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new StreamSqlStatement(template.getTemplateName(), JobKind.TEMPLATE_SQL, s))
+                    List<SqlStatement> sqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
+                            .map(s -> new SqlStatement(template.getTemplateName(), JobKind.TEMPLATE_SQL, s))
                             .collect(Collectors.toList());
-                    template.setTemplateContent(streamSqlStatements.get(0).getSqlContent());
+                    template.setTemplateContent(sqlStatements.get(0).getSqlContent());
                     break;
                 default:
                     break;

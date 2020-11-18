@@ -3,8 +3,8 @@ package com.onework.core.job.executor.impl;
 import com.onework.core.client.HdfsCheckpointManager;
 import com.onework.core.client.YarnClusterClient;
 import com.onework.core.conf.OneWorkConf;
+import com.onework.core.entity.SqlStatement;
 import com.onework.core.entity.StreamJob;
-import com.onework.core.entity.StreamSqlStatement;
 import com.onework.core.enums.JobStatus;
 import com.onework.core.job.executor.StreamJobExecutor;
 import com.onework.core.service.StreamJobService;
@@ -44,10 +44,10 @@ import static com.google.common.base.Preconditions.checkState;
 @Slf4j
 @Component
 public class FlinkStreamJobExecutor implements StreamJobExecutor {
-    private OneWorkConf oneWorkConf;
-    private YarnClusterClient yarnClusterClient;
-    private HdfsCheckpointManager hdfsCheckPointManager;
-    private StreamJobService streamJobService;
+    private final OneWorkConf oneWorkConf;
+    private final YarnClusterClient yarnClusterClient;
+    private final HdfsCheckpointManager hdfsCheckPointManager;
+    private final StreamJobService streamJobService;
 
     @Autowired
     public FlinkStreamJobExecutor(OneWorkConf oneWorkConf, YarnClusterClient yarnClusterClient,
@@ -65,6 +65,15 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
             checkState(StringUtils.isNotEmpty(savepoint));
             StreamTableEnvironment tableEnv = createExecutor(job.getJobArguments(), savepoint);
             execute(job, tableEnv);
+        } else {
+            Map<String, String> jobArguments = job.getJobArguments();
+            String isDependentJob = jobArguments.get("dependent_job");
+            if (isDependentJob != null && isDependentJob.equalsIgnoreCase("true")) {
+                streamJobService.save(job);
+            } else {
+                StreamTableEnvironment tableEnv = createExecutor(job.getJobArguments(), null);
+                execute(job, tableEnv);
+            }
         }
     }
 
@@ -148,17 +157,14 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
     }
 
     private void execute(StreamJob job, StreamTableEnvironment tableEnv) {
-        Map<String, String> jobArguments = job.getJobArguments();
-        String isDependentJob = jobArguments.get("dependent_job");
-        if (isDependentJob != null && isDependentJob.equalsIgnoreCase("true")) return;
         List<String> dependentJobNames = job.getDependentJobNames();
         checkState(!dependentJobNames.isEmpty());
         StatementSet statementSet = tableEnv.createStatementSet();
         for (String dependentJobName : dependentJobNames) {
             StreamJob dependentJob = streamJobService.findByName(dependentJobName);
-            executeSql(dependentJob.getStreamSqlStatements(), tableEnv, statementSet);
+            executeSql(dependentJob.getSqlStatements(), tableEnv, statementSet);
         }
-        executeSql(job.getStreamSqlStatements(), tableEnv, statementSet);
+        executeSql(job.getSqlStatements(), tableEnv, statementSet);
         TableResult tableResult = statementSet.execute();
         Optional<JobClient> jobClient = tableResult.getJobClient();
         String jobId = null;
@@ -172,10 +178,10 @@ public class FlinkStreamJobExecutor implements StreamJobExecutor {
         }
     }
 
-    private void executeSql(@NonNull List<StreamSqlStatement> streamSqlStatements, StreamTableEnvironment tableEnv,
+    private void executeSql(@NonNull List<SqlStatement> sqlStatements, StreamTableEnvironment tableEnv,
                             StatementSet statementSet) {
-        for (StreamSqlStatement streamSqlStatement : streamSqlStatements) {
-            String sql = streamSqlStatement.getSqlContent();
+        for (SqlStatement sqlStatement : sqlStatements) {
+            String sql = sqlStatement.getSqlContent();
             log.info(sql);
             if (sql.startsWith("INSERT") || sql.startsWith("insert")) {
                 statementSet.addInsertSql(sql);

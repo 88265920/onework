@@ -12,4 +12,5 @@ public class JobErrorMsg {
     public static final String PATTERN_PARAM_ERROR = "Pattern parameter error";
     public static final String TEMPLATE_NOT_EXIST = "Template '%s' does not exist";
     public static final String FUNCTION_NOT_EXIST = "Function '%s' does not exist";
+    public static final String TEMPLATE_EXISTED = "Template already exists";
 }

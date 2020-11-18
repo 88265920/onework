@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class BatchJobQuartzExecutor extends QuartzJobBean {
-    private BatchJobService batchJobService = ApplicationContextGetter.getContext().getBean(BatchJobService.class);
+    private final BatchJobService batchJobService = ApplicationContextGetter.getContext().getBean(BatchJobService.class);
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {

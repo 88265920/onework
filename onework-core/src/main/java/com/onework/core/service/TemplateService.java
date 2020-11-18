@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TemplateService {
-    private TemplateRepository templateRepository;
+    private final TemplateRepository templateRepository;
 
     @Autowired
     public TemplateService(TemplateRepository templateRepository) {

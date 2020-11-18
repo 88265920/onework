@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 public class YarnClusterClient {
     private static final String YARN_WEB_ADDR = "yarn.resourcemanager.webapp.address";
 
-    private OneWorkConf oneWorkConf;
+    private final OneWorkConf oneWorkConf;
     private Map<String, String> yarnConfigs;
 
     private String applicationId;

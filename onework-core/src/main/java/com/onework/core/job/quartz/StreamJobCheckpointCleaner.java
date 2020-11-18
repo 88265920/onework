@@ -17,8 +17,8 @@ import java.util.Set;
 
 @Slf4j
 public class StreamJobCheckpointCleaner extends QuartzJobBean {
-    private StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);
-    private HdfsCheckpointManager hdfsCheckPointManager = ApplicationContextGetter.getContext().getBean(HdfsCheckpointManager.class);
+    private final StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);
+    private final HdfsCheckpointManager hdfsCheckPointManager = ApplicationContextGetter.getContext().getBean(HdfsCheckpointManager.class);
 
     @SneakyThrows
     @Override

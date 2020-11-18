@@ -50,7 +50,7 @@ GET http://localhost:8080/streamJob/delete?jobName=szb_visualization
 
 
 
-POST http://localhost:8080/streamJob/submit
+POST http://localhost:8080/streamJob/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -67,7 +67,7 @@ GET http://localhost:8080/streamJob/delete?jobName=functions
 
 
 
-POST http://localhost:8080/streamJob/submit
+POST http://localhost:8080/streamJob/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -84,7 +84,7 @@ GET http://localhost:8080/streamJob/delete?jobName=szb_visualization_create
 
 
 
-POST http://localhost:8080/streamJob/submit
+POST http://localhost:8080/streamJob/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary

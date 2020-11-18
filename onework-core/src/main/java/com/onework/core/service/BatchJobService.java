@@ -69,7 +69,7 @@ public class BatchJobService {
         BatchJobExecutor batchJobExecutor = requireNonNull(batchJobExecutors.get(batchJob.getEngineKind()));
         PatternReplacerFactory patternReplacerFactory = ApplicationContextGetter.getContext()
                 .getBean(PatternReplacerFactory.class);
-        patternReplacerFactory.runtimePatternReplace(batchJob.getStreamSqlStatements());
+//        patternReplacerFactory.runtimePatternReplace(batchJob.getStreamSqlStatements());
         batchJobExecutor.executeJob(fireTime, batchJob, executePositionTracker);
     }
 

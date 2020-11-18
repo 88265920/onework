@@ -19,10 +19,10 @@ import java.util.Set;
 
 @Service
 public class StreamJobService {
-    private StreamJobRepository streamJobRepository;
-    private StreamJobParser streamJobParser;
-    private FlinkRestClient flinkRestClient;
-    private HdfsCheckpointManager hdfsCheckPointManager;
+    private final StreamJobRepository streamJobRepository;
+    private final StreamJobParser streamJobParser;
+    private final FlinkRestClient flinkRestClient;
+    private final HdfsCheckpointManager hdfsCheckPointManager;
 
     @Autowired
     public StreamJobService(StreamJobRepository streamJobRepository, StreamJobParser streamJobParser,

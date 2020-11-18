@@ -34,9 +34,9 @@ import static com.google.common.base.Preconditions.checkState;
 @Slf4j
 @Component
 public class HdfsCheckpointManager {
-    private OneWorkConf oneWorkConf;
+    private final OneWorkConf oneWorkConf;
+    private final Map<String, String> hdfsConfigs = new HashMap<>();
     private FileSystem fs;
-    private Map<String, String> hdfsConfigs = new HashMap<>();
 
     @Autowired
     public HdfsCheckpointManager(OneWorkConf oneWorkConf) throws DocumentException {

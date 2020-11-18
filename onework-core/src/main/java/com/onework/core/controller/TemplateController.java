@@ -15,13 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static com.onework.core.common.JobErrorMsg.*;
+
 @Slf4j
 @RestController
 @RequestMapping(path = "template")
 @SuppressWarnings("rawtypes")
 public class TemplateController {
-    private TemplateService templateService;
-    private TemplateParser templateParser;
+    private final TemplateService templateService;
+    private final TemplateParser templateParser;
 
     @Autowired
     public TemplateController(TemplateService templateService, TemplateParser templateParser) {
@@ -32,14 +34,14 @@ public class TemplateController {
     @PostMapping("create")
     @ResponseBody
     public Response create(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) return Response.error("文件不存在");
+        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
 
         String content;
         try {
             content = new String(ByteStreams.toByteArray(file.getInputStream()));
         } catch (IOException e) {
             log.error("", e);
-            return Response.error("文件解析失败");
+            return Response.error(FILE_PARSING_FAILED);
         }
 
         Template template;
@@ -50,7 +52,7 @@ public class TemplateController {
         }
 
         if (templateService.existsByTemplateName(template.getTemplateName())) {
-            return Response.error("模板已存在");
+            return Response.error(TEMPLATE_EXISTED);
         } else {
             template.setTemplateStatus(TemplateStatus.CREATED);
             templateService.save(template);

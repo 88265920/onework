@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class BatchSqlStatement extends BasePKEntity {
+public class SqlStatement extends BasePKEntity {
 
     @NonNull
     private String jobName;
@@ -24,10 +24,10 @@ public class BatchSqlStatement extends BasePKEntity {
     @NonNull
     private String sqlContent;
 
-    public BatchSqlStatement() {
+    public SqlStatement() {
     }
 
-    public BatchSqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
+    public SqlStatement(@NonNull String jobName, @NonNull JobKind jobKind, @NonNull String sqlContent) {
         this.jobName = jobName;
         this.jobKind = jobKind;
         this.sqlContent = sqlContent;

@@ -32,7 +32,7 @@ public class TemplateEntryParser implements StatementParser {
             jobParams.put(paramSp[0].trim(), paramSp[1].replace("'", ""));
         }
 
-        templateEntryData.put("templateParams", jobParams);
+        templateEntryData.put("templateArguments", jobParams);
 
         return templateEntryData;
     }

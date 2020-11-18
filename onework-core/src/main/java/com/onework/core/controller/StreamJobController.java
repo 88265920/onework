@@ -30,9 +30,9 @@ import static com.onework.core.common.JobErrorMsg.*;
 @SuppressWarnings("rawtypes")
 public class StreamJobController {
     private static final String QUARTZ_JOB_GROUP_NAME = "onework-stream-system-job";
-    private StreamJobService streamJobService;
-    private StreamJobExecutor streamJobExecutor;
-    private QuartzJobService quartzJobService;
+    private final StreamJobService streamJobService;
+    private final StreamJobExecutor streamJobExecutor;
+    private final QuartzJobService quartzJobService;
 
     @Autowired
     public StreamJobController(StreamJobService streamJobService, StreamJobExecutor streamJobExecutor,

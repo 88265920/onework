@@ -12,7 +12,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class QuartzJobService {
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
 
     @SneakyThrows
     @Autowired

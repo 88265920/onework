@@ -16,8 +16,8 @@ import java.util.Map;
 
 @Slf4j
 public class StreamJobStatusTracker extends QuartzJobBean {
-    private StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);
-    private FlinkRestClient flinkRestClient = ApplicationContextGetter.getContext().getBean(FlinkRestClient.class);
+    private final StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);
+    private final FlinkRestClient flinkRestClient = ApplicationContextGetter.getContext().getBean(FlinkRestClient.class);
 
     @SneakyThrows
     @Override

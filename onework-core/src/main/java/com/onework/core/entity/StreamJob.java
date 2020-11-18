@@ -12,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class StreamJob extends BaseJob {
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "jobName", orphanRemoval = true)
-    private List<StreamSqlStatement> streamSqlStatements;
+    private List<SqlStatement> sqlStatements;
 
     private String jobId;
 

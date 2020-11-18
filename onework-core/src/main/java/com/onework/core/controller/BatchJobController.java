@@ -27,8 +27,8 @@ import static com.onework.core.common.JobErrorMsg.*;
 @SuppressWarnings("rawtypes")
 public class BatchJobController {
     private static final String QUARTZ_JOB_GROUP_NAME = "onework-batch-job";
-    private BatchJobService batchJobService;
-    private QuartzJobService quartzJobService;
+    private final BatchJobService batchJobService;
+    private final QuartzJobService quartzJobService;
 
     @Autowired
     public BatchJobController(BatchJobService batchJobService, QuartzJobService quartzJobService) {

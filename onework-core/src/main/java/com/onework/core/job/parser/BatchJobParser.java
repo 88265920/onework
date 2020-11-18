@@ -2,7 +2,7 @@ package com.onework.core.job.parser;
 
 import com.google.common.collect.Sets;
 import com.onework.core.entity.BatchJob;
-import com.onework.core.entity.StreamSqlStatement;
+import com.onework.core.entity.SqlStatement;
 import com.onework.core.enums.EngineKind;
 import com.onework.core.enums.JobKind;
 import com.onework.core.enums.StatementKind;
@@ -27,9 +27,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
 public class BatchJobParser extends BaseJobParser<BatchJob> {
-    private Set<String> engineKinds = Sets.newHashSet(
+    private final Set<String> engineKinds = Sets.newHashSet(
             Stream.of(EngineKind.values()).map(Enum::name).collect(Collectors.toList()));
-    private PatternReplacerFactory patternReplacerFactory;
+    private final PatternReplacerFactory patternReplacerFactory;
 
     @Autowired
     public BatchJobParser(PatternReplacerFactory patternReplacerFactory) {
@@ -48,7 +48,7 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
     protected BatchJob onCreateJob(List<Map<String, Object>> statementsData) {
         BatchJob batchJob = new BatchJob();
         List<String> dependentJobNames = new ArrayList<>();
-        List<StreamSqlStatement> jobStreamSqlStatements = new ArrayList<>();
+        List<SqlStatement> jobSqlStatements = new ArrayList<>();
         for (Map<String, Object> statementData : statementsData) {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
@@ -68,18 +68,18 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
                     break;
                 case SQL_STATEMENT:
                     checkArgument(statementData.containsKey("sqlStatements"));
-                    List<StreamSqlStatement> streamSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
-                            .map(s -> new StreamSqlStatement(batchJob.getJobName(), JobKind.BATCH_SQL, s))
+                    List<SqlStatement> batchSqlStatements = ((List<String>) statementData.get("sqlStatements")).stream()
+                            .map(s -> new SqlStatement(batchJob.getJobName(), JobKind.BATCH_SQL, s))
                             .collect(Collectors.toList());
-                    patternReplacerFactory.patternReplace(streamSqlStatements);
-                    jobStreamSqlStatements.addAll(streamSqlStatements);
+                    patternReplacerFactory.patternReplace(batchSqlStatements);
+                    jobSqlStatements.addAll(batchSqlStatements);
                     break;
                 default:
                     break;
             }
         }
         batchJob.setDependentJobNames(dependentJobNames);
-        batchJob.setStreamSqlStatements(jobStreamSqlStatements);
+//        batchJob.setSqlStatements(jobSqlStatements);
         return batchJob;
     }
 }

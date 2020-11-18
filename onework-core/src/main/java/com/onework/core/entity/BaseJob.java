@@ -24,14 +24,14 @@ public abstract class BaseJob extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private JobStatus jobStatus;
 
-    @Enumerated(value = EnumType.STRING)
     @NonNull
+    @Enumerated(value = EnumType.STRING)
     private JobKind jobKind;
 
     @Lob
+    @NonNull
     @Column(columnDefinition = "text")
     @Convert(converter = MapConverter.class)
-    @NonNull
     private Map<String, String> jobArguments;
 
     @Lob

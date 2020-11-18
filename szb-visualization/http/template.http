@@ -1,4 +1,4 @@
-POST http://localhost:8080/template/submit
+POST http://localhost:8080/template/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -16,7 +16,7 @@ GET http://localhost:8080/template/delete?templateName=ud_kafka_conf
 
 
 
-POST http://localhost:8080/template/submit
+POST http://localhost:8080/template/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -35,7 +35,7 @@ GET http://localhost:8080/template/delete?templateName=dispatch_slave_base_data_
 
 
 
-POST http://localhost:8080/template/submit
+POST http://localhost:8080/template/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -53,7 +53,7 @@ GET http://localhost:8080/template/delete?templateName=bdnode5_szb_visualization
 
 
 
-POST http://localhost:8080/template/submit
+POST http://localhost:8080/template/create
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary

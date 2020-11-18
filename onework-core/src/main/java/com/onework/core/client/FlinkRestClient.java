@@ -27,8 +27,8 @@ import static java.util.Objects.requireNonNull;
 @Slf4j
 @Component
 public class FlinkRestClient {
-    private OneWorkConf oneWorkConf;
-    private YarnClusterClient yarnClusterClient;
+    private final OneWorkConf oneWorkConf;
+    private final YarnClusterClient yarnClusterClient;
 
     @Autowired
     public FlinkRestClient(OneWorkConf oneWorkConf, YarnClusterClient yarnClusterClient) {
