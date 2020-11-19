@@ -19,9 +19,9 @@ public class HadoopXmlUtils {
 
         Map<String, String> values = new HashMap<>();
 
-        Iterator iterator = root.elementIterator();
+        Iterator<Element> iterator = root.elementIterator();
         while (iterator.hasNext()) {
-            Element node = (Element) iterator.next();
+            Element node = iterator.next();
             String name = node.getName().trim().toLowerCase();
             if (name.equals("property")) {
                 values.put(node.elementTextTrim("name"), node.elementTextTrim("value"));
