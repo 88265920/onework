@@ -17,7 +17,6 @@
 
     <modules>
         <module>onework-core</module>
-        <module>onework-function</module>
     </modules>
 
     <packaging>pom</packaging>
