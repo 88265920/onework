@@ -3,6 +3,10 @@ package com.onework.core.conf;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @ConfigurationProperties(prefix = "onework")
 public class OneWorkConf {

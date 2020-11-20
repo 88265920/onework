@@ -41,6 +41,10 @@ import java.util.stream.Stream;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @Component
 public class FlinkStreamJobExecutor implements StreamJobExecutor {

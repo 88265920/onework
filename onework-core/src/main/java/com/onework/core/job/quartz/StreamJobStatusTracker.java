@@ -14,6 +14,10 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 public class StreamJobStatusTracker extends QuartzJobBean {
     private final StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);

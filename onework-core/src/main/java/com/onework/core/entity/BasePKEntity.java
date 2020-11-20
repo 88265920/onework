@@ -8,6 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)

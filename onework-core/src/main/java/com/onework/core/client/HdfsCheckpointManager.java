@@ -31,6 +31,10 @@ import java.util.*;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @Component
 public class HdfsCheckpointManager {

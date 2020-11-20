@@ -8,6 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.sql.Timestamp;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @MappedSuperclass
 public abstract class BaseEntity {

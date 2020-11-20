@@ -24,6 +24,10 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @Component
 public class FlinkRestClient {

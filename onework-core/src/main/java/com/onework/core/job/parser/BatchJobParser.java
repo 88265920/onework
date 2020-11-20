@@ -25,6 +25,10 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Component
 public class BatchJobParser extends BaseJobParser<BatchJob> {
     private final Set<String> engineKinds = Sets.newHashSet(
@@ -48,7 +52,6 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
     protected BatchJob onCreateJob(List<Map<String, Object>> statementsData) {
         BatchJob batchJob = new BatchJob();
         List<String> dependentJobNames = new ArrayList<>();
-        List<SqlStatement> jobSqlStatements = new ArrayList<>();
         for (Map<String, Object> statementData : statementsData) {
             StatementKind statementKind = getStatementKind(statementData);
             switch (statementKind) {
@@ -72,14 +75,12 @@ public class BatchJobParser extends BaseJobParser<BatchJob> {
                             .map(s -> new SqlStatement(batchJob.getJobName(), JobKind.BATCH_SQL, s))
                             .collect(Collectors.toList());
                     patternReplacerFactory.patternReplace(batchSqlStatements);
-                    jobSqlStatements.addAll(batchSqlStatements);
                     break;
                 default:
                     break;
             }
         }
         batchJob.setDependentJobNames(dependentJobNames);
-//        batchJob.setSqlStatements(jobSqlStatements);
         return batchJob;
     }
 }

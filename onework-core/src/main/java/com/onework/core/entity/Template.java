@@ -10,6 +10,10 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.Map;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)

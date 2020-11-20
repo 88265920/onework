@@ -1,5 +1,9 @@
 package com.onework.core.common;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 public class JobErrorMsg {
     public static final String JOB_NOT_FOUND = "Job does not exist";
     public static final String FILE_NOT_EXIST_OR_EMPTY = "The file does not exist or the content is empty";

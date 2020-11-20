@@ -1,5 +1,10 @@
 package com.onework.core.pattern;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
+
 import com.onework.core.ApplicationContextGetter;
 import com.onework.core.entity.Template;
 import com.onework.core.service.TemplateService;

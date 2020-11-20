@@ -1,5 +1,10 @@
 package com.onework.core.repository;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
+
 import com.onework.core.entity.BatchJob;
 import com.onework.core.enums.JobStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

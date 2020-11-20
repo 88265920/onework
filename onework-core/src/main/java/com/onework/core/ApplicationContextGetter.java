@@ -6,6 +6,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Component
 public class ApplicationContextGetter implements ApplicationContextAware {
     private static ApplicationContext context;

@@ -15,6 +15,10 @@ import org.quartz.JobExecutionContext;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 public class StreamJobCheckpointCleaner extends QuartzJobBean {
     private final StreamJobService streamJobService = ApplicationContextGetter.getContext().getBean(StreamJobService.class);

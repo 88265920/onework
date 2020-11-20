@@ -11,6 +11,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Repository
 public interface StreamJobRepository extends JpaRepository<StreamJob, String> {
     @Query("select j from StreamJob j where j.jobStatus = ?1")

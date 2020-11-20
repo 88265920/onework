@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Component
 public class TemplateParser extends BaseJobParser<Template> {
 

@@ -1,6 +1,5 @@
 package com.onework.core.service;
 
-import com.onework.core.ApplicationContextGetter;
 import com.onework.core.entity.BatchJob;
 import com.onework.core.enums.EngineKind;
 import com.onework.core.enums.JobStatus;
@@ -8,7 +7,6 @@ import com.onework.core.job.executor.BatchJobExecutor;
 import com.onework.core.job.executor.ExecutePositionTracker;
 import com.onework.core.job.executor.impl.JDBCBatchJobExecutor;
 import com.onework.core.job.parser.BatchJobParser;
-import com.onework.core.pattern.PatternReplacerFactory;
 import com.onework.core.repository.BatchJobRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,10 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @Service
 public class BatchJobService {
@@ -67,9 +69,6 @@ public class BatchJobService {
 
     public void executeJob(Date fireTime, BatchJob batchJob) {
         BatchJobExecutor batchJobExecutor = requireNonNull(batchJobExecutors.get(batchJob.getEngineKind()));
-        PatternReplacerFactory patternReplacerFactory = ApplicationContextGetter.getContext()
-                .getBean(PatternReplacerFactory.class);
-//        patternReplacerFactory.runtimePatternReplace(batchJob.getStreamSqlStatements());
         batchJobExecutor.executeJob(fireTime, batchJob, executePositionTracker);
     }
 

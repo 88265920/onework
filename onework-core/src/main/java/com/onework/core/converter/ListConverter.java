@@ -5,6 +5,10 @@ import javax.persistence.Converter;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Converter
 public class ListConverter implements AttributeConverter<List<String>, String> {
     @Override

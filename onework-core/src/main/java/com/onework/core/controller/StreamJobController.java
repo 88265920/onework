@@ -24,6 +24,10 @@ import java.io.IOException;
 import static com.google.common.base.Preconditions.checkState;
 import static com.onework.core.common.JobErrorMsg.*;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @RestController
 @RequestMapping(path = "streamJob")
@@ -63,7 +67,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response create(@NonNull MultipartFile file) {
-        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        if (file.isEmpty()) {
+            return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        }
 
         String content;
         try {
@@ -97,7 +103,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response upgrade(@NonNull MultipartFile file) {
-        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        if (file.isEmpty()) {
+            return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        }
 
         String content;
         try {
@@ -127,7 +135,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response resume(@NonNull String jobName) {
-        if (!streamJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!streamJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
 
         StreamJob streamJob = streamJobService.findByName(jobName);
         if (streamJob == null) {
@@ -145,7 +155,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response resumeWithoutState(@NonNull String jobName) {
-        if (!streamJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!streamJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
 
         StreamJob streamJob = streamJobService.findByName(jobName);
         if (streamJob == null) {
@@ -169,7 +181,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response suspend(@NonNull String jobName) {
-        if (!streamJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!streamJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
 
         StreamJob streamJob = streamJobService.findByName(jobName);
         if (streamJob == null) {
@@ -177,14 +191,18 @@ public class StreamJobController {
         }
         String jobId = streamJob.getJobId();
         checkState(StringUtils.isNotEmpty(jobId));
-        if (!streamJobService.hasCheckPoint(jobId)) return Response.error(NO_CHECKPOINT);
+        if (!streamJobService.hasCheckPoint(jobId)) {
+            return Response.error(NO_CHECKPOINT);
+        }
         boolean success;
         try {
             success = streamJobService.suspendJob(jobId);
         } catch (Exception e) {
             return Response.error(e);
         }
-        if (!success) return Response.error(JOB_SUSPEND_FAILED);
+        if (!success) {
+            return Response.error(JOB_SUSPEND_FAILED);
+        }
         streamJobService.setStatusById(JobStatus.SUSPEND, jobId);
         streamJobService.setCheckpointJobIdById(jobId);
         streamJobService.setResumeMethodById(ResumeMethod.CHECKPOINT, jobId);
@@ -196,7 +214,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response suspendWithSavepoint(@NonNull String jobName) {
-        if (!streamJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!streamJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
 
         StreamJob streamJob = streamJobService.findByName(jobName);
         if (streamJob == null) {
@@ -221,7 +241,9 @@ public class StreamJobController {
     @ResponseBody
     @Transactional
     public Response delete(@NonNull String jobName) {
-        if (!streamJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!streamJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
         streamJobService.deleteByJobName(jobName);
         return Response.ok();
     }

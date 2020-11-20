@@ -7,6 +7,10 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 public class TemplateEntryParser implements StatementParser {
 
     @Override

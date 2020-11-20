@@ -1,5 +1,10 @@
 package com.onework.core.pattern.function;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
+
 import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkArgument;

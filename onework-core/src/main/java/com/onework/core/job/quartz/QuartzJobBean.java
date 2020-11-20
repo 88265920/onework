@@ -10,6 +10,10 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyAccessorFactory;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 public abstract class QuartzJobBean implements Job {
 

@@ -17,6 +17,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 public abstract class BaseJobParser<T> {
     private final Map<StatementKind, StatementParser> statementParsers = new EnumMap<>(StatementKind.class);
 

@@ -17,6 +17,10 @@ import java.io.IOException;
 
 import static com.onework.core.common.JobErrorMsg.*;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @RestController
 @RequestMapping(path = "template")
@@ -34,7 +38,9 @@ public class TemplateController {
     @PostMapping("create")
     @ResponseBody
     public Response create(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        if (file.isEmpty()) {
+            return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        }
 
         String content;
         try {
@@ -65,7 +71,9 @@ public class TemplateController {
     @ResponseBody
     @Transactional
     public Response delete(@NonNull String templateName) {
-        if (!templateService.existsByTemplateName(templateName)) return Response.error("模板不存在");
+        if (!templateService.existsByTemplateName(templateName)) {
+            return Response.error("模板不存在");
+        }
         templateService.deleteByTemplateName(templateName);
         return Response.ok();
     }

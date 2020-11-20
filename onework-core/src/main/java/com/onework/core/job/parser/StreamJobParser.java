@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Component
 public class StreamJobParser extends BaseJobParser<StreamJob> {
     private PatternReplacerFactory patternReplacerFactory;

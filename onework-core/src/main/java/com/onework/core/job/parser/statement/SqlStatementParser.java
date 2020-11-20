@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 public class SqlStatementParser implements StatementParser {
 
     @Override

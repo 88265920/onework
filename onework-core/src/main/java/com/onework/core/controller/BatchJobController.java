@@ -21,6 +21,10 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkState;
 import static com.onework.core.common.JobErrorMsg.*;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @RestController
 @RequestMapping(value = "batchJob")
@@ -46,7 +50,9 @@ public class BatchJobController {
     @ResponseBody
     @Transactional
     public Response create(@NonNull MultipartFile file) {
-        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        if (file.isEmpty()) {
+            return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        }
 
         String content;
         try {
@@ -86,7 +92,9 @@ public class BatchJobController {
     @ResponseBody
     @Transactional
     public Response upgrade(@NonNull MultipartFile file) {
-        if (file.isEmpty()) return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        if (file.isEmpty()) {
+            return Response.error(FILE_NOT_EXIST_OR_EMPTY);
+        }
 
         String content;
         try {
@@ -126,7 +134,9 @@ public class BatchJobController {
     @ResponseBody
     @Transactional
     public Response delete(@NonNull String jobName) {
-        if (!batchJobService.existsByJobName(jobName)) return Response.error(JOB_NOT_FOUND);
+        if (!batchJobService.existsByJobName(jobName)) {
+            return Response.error(JOB_NOT_FOUND);
+        }
         batchJobService.deleteByJobName(jobName);
         return Response.ok();
     }

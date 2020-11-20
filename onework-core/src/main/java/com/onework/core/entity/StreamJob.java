@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)

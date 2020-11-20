@@ -12,6 +12,10 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Slf4j
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution

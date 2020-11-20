@@ -12,6 +12,10 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author kangj
+ * @date 2020/11/20
+ **/
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
